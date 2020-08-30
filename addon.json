@@ -1,0 +1,9 @@
+{
+    "title": "Workshop Downloader",
+    "type": "tool",
+    "tags": [],
+    "ignore": [
+        "README.md",
+        ".*"
+    ]
+}
