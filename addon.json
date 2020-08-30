@@ -4,6 +4,7 @@
     "tags": [],
     "ignore": [
         "README.md",
-        ".*"
+        ".git",
+        ".github"
     ]
 }
