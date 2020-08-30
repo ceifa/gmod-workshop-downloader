@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Garry's Mod Addon Creator
+        uses: viral32111/gmad@v0.1.2
+        with:
+          # The path to the addon, this path should contain a valid addon.json file.
+          path: '.'
+          # The name of the .gma file to create.
+          name: 'workshop-downloader'
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: gma
+          path: workshop-downloader.gma
