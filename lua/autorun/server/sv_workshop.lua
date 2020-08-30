@@ -21,22 +21,16 @@ function DOWNLOADER:Traverse(subPath, basePath, foundExts)
     for _, f in pairs(files) do
         local ext = string.GetExtensionFromFilename(f)
         foundExts[ext] = true
-
-        if ext == "bsp" and string.StripExtension(f) == game.GetMap() then
-            return true
-        end
+        if ext == "bsp" and string.StripExtension(f) == game.GetMap() then return true end
     end
 
     for _, d in pairs(dirs) do
-        if self:Traverse(subPath .. d .. "/", basePath, foundExts) then
-            return true
-        end
+        if self:Traverse(subPath .. d .. "/", basePath, foundExts) then return true end
     end
 end
 
 function DOWNLOADER:AddWorkshopResources()
     local addons = engine.GetAddons()
-
     print("[DOWNLOADER] STARTING TO ADD RESOURCES FOR " .. #addons .. " ADDONS...")
 
     for _, addon in pairs(addons) do
@@ -56,7 +50,7 @@ function DOWNLOADER:AddWorkshopResources()
 
             if shouldAdd then
                 resource.AddWorkshop(addon.wsid)
-                print("[DOWNLOADER] ADDING RESOURCE FOR:  " .. addon.title)
+                print("[DOWNLOADER] ADDING RESOURCE FOR '" .. addon.title .. "' WITH WSID '" .. addon.wsid .. "'")
             end
         end
     end
@@ -66,13 +60,12 @@ end
 
 function DOWNLOADER:CheckUnusedPlayermodels()
     print("[DOWNLOADER] STARTING TO CHECK POINTSHOP PLAYERMODELS")
-
     local models = player_manager.AllValidModels()
 
     for k, model in pairs(models) do
         model = string.lower(model)
 
-        if not string.StartWith(model, "models/player") then
+        if not string.StartWith(model, "models/player/group") then
             local found = false
 
             for _, psItem in pairs(PS.Items) do
@@ -95,13 +88,10 @@ function DOWNLOADER:Start()
     self:AddWorkshopResources()
 
     if PS then
-        timer.Simple(
-            5,
-            function()
-                self:CheckUnusedPlayermodels()
-                DOWNLOADER = nil
-            end
-        )
+        timer.Simple(5, function()
+            self:CheckUnusedPlayermodels()
+            DOWNLOADER = nil
+        end)
     else
         MsgC(Color(255, 0, 0), "[DOWNLOADER] POINTSHOP 1 NOT FOUND\n")
         DOWNLOADER = nil
