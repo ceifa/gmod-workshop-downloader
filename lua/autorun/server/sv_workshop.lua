@@ -18,6 +18,8 @@ DOWNLOADER.ResourceExtensions = {
 function DOWNLOADER:Traverse(subPath, basePath, foundExts)
     local files, dirs = file.Find(subPath .. "*", basePath)
 
+    if not files then return end
+
     for _, f in pairs(files) do
         local ext = string.GetExtensionFromFilename(f)
         foundExts[ext] = true
