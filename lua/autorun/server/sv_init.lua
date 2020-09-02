@@ -1,3 +1,3 @@
-include("./sv_workshop.lua")
+include("autorun/server/sv_workshop.lua")
 
 DOWNLOADER:Start()
