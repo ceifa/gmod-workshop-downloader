@@ -55,7 +55,7 @@ function DOWNLOADER:AddWorkshopResources()
             if shouldAdd then
                 resource.AddWorkshop(addon.wsid)
                 totalAdded = totalAdded + 1
-                print("[DOWNLOADER] [+] (" .. addon.wsid .. ") " .. addon.title)
+                print(string.format("[DOWNLOADER] [+] %-10s %s", addon.wsid, addon.title))
             end
         end
     end
