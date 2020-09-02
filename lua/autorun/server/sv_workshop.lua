@@ -33,7 +33,9 @@ end
 
 function DOWNLOADER:AddWorkshopResources()
     local addons = engine.GetAddons()
-    print("[DOWNLOADER] STARTING TO ADD RESOURCES FOR " .. #addons .. " ADDONS...")
+    local totalAdded = 0
+
+    print("[DOWNLOADER] SCANNING " .. #addons .. " ADDONS TO ADD RESOURCES...")
 
     for _, addon in pairs(addons) do
         if addon.downloaded and addon.mounted then
@@ -52,17 +54,20 @@ function DOWNLOADER:AddWorkshopResources()
 
             if shouldAdd then
                 resource.AddWorkshop(addon.wsid)
-                print("[DOWNLOADER] ADDING RESOURCE FOR '" .. addon.title .. "' WITH WSID '" .. addon.wsid .. "'")
+                totalAdded = totalAdded + 1
+                print(string.format("[DOWNLOADER] [+] %-10s %s", addon.wsid, addon.title))
             end
         end
     end
 
-    print("[DOWNLOADER] FINISHED TO ADD RESOURCES")
+    print("[DOWNLOADER] FINISHED TO ADD RESOURCES: " .. totalAdded .. " ADDONS SELECTED")
 end
 
 function DOWNLOADER:CheckUnusedPlayermodels()
-    print("[DOWNLOADER] STARTING TO CHECK POINTSHOP PLAYERMODELS")
     local models = player_manager.AllValidModels()
+    local totalNotFound = 0
+
+    print("[DOWNLOADER] STARTING TO CHECK POINTSHOP PLAYERMODELS...")
 
     for k, model in pairs(models) do
         model = string.lower(model)
@@ -78,12 +83,13 @@ function DOWNLOADER:CheckUnusedPlayermodels()
             end
 
             if not found then
+                totalNotFound = totalNotFound + 1
                 MsgC(Color(255, 0, 0), "[DOWNLOADER] MODEL " .. k .. " NOT FOUND IN POINTSHOP: " .. model .. "\n")
             end
         end
     end
 
-    print("[DOWNLOADER] FINISHED POINTSHOP SEARCH")
+    print("[DOWNLOADER] FINISHED POINTSHOP SEARCH: " .. totalNotFound .. " PLAYERMODELS NOT FOUND")
 end
 
 function DOWNLOADER:Start()
@@ -95,7 +101,7 @@ function DOWNLOADER:Start()
             DOWNLOADER = nil
         end)
     else
-        MsgC(Color(255, 0, 0), "[DOWNLOADER] POINTSHOP 1 NOT FOUND\n")
+        MsgC(Color(255, 0, 0), "[DOWNLOADER] POINTSHOP 1 NOT FOUND, SKIPPING PLAYERMODELS CHECK\n")
         DOWNLOADER = nil
     end
 end
