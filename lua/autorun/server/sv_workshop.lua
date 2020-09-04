@@ -29,7 +29,7 @@ function DOWNLOADER:IsCurrentMap(file, ext)
 end
 
 -- Analyze each mounted workshop addon
-function DOWNLOADER:ParseAddon(currentPah, mountedGMAPath)
+function DOWNLOADER:ScanGMA(currentPah, mountedGMAPath)
     local files, dirs = file.Find(currentPah .. "*", mountedGMAPath)
 
     if files then
@@ -43,7 +43,7 @@ function DOWNLOADER:ParseAddon(currentPah, mountedGMAPath)
 
     if dirs then
         for _, newSubDir in pairs(dirs) do
-            if self:ParseAddon(currentPah .. newSubDir .. "/", mountedGMAPath) then return true end
+            if self:ScanGMA(currentPah .. newSubDir .. "/", mountedGMAPath) then return true end
         end
     end
 end
@@ -56,7 +56,7 @@ function DOWNLOADER:AddWorkshopResources()
 
     for _, addon in pairs(addons) do
         if addon.downloaded and addon.mounted then
-            if self:ParseAddon("", addon.title) then
+            if self:ScanGMA("", addon.title) then
                 resource.AddWorkshop(addon.wsid)
                 totalAdded = totalAdded + 1
                 print(string.format("[DOWNLOADER] [+] %-10s %s", addon.wsid, addon.title))
