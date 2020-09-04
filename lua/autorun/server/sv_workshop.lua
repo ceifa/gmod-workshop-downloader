@@ -5,6 +5,7 @@ DOWNLOADER.ResourceExtensions = {
     --Models
     mdl = true,
     vtx = true,
+    vcd = true,
     --Sounds
     wav = true,
     mp3 = true,
