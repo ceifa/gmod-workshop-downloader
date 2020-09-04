@@ -29,7 +29,7 @@ function DOWNLOADER:ScanGMA(currentPah, mountedGMAPath)
                 -- Download a gma with the current map if it's available
                 local isCurrentMap = string.StripExtension(subFile) == game.GetMap()
                 return isCurrentMap
-            elseif self.ResourceExtensions[ext] then
+            elseif self.ResourceExtensions[ext] and currentPah ~= "maps/" then
                 return true
             end
         end
@@ -37,7 +37,10 @@ function DOWNLOADER:ScanGMA(currentPah, mountedGMAPath)
 
     if dirs then
         for _, subDir in pairs(dirs) do
-            if self:ScanGMA(currentPah .. subDir .. "/", mountedGMAPath) then return true end
+            local result = self:ScanGMA(currentPah .. subDir .. "/", mountedGMAPath)
+            if result ~= nil then
+                return result
+            end
         end
     end
 end
