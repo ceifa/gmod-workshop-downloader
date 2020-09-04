@@ -114,6 +114,11 @@ end
 
 -- Run once
 function DOWNLOADER:Start(finishCallback)
+    if game.SinglePlayer() then
+        finishCallback()
+        return
+    end
+
     self:AddWorkshopResources()
 
     if PS then
