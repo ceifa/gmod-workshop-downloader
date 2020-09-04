@@ -13,7 +13,9 @@ DOWNLOADER.ResourceExtensions = {
     vtf = true,
     png = true,
     -- Particles
-    pcf = true
+    pcf = true,
+    -- Resources
+    ttf = true
 }
 
 -- Analyze each mounted workshop addon
