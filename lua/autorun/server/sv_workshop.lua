@@ -27,7 +27,7 @@ function DOWNLOADER:ScanGMA(currentPah, mountedGMAPath)
             local isMap = ext == "bsp"
             if isMap then
                 -- Download a gma with the current map if it's available
-                local isCurrentMap = string.StripExtension(file) == game.GetMap()
+                local isCurrentMap = string.StripExtension(subFile) == game.GetMap()
                 return isCurrentMap
             elseif self.ResourceExtensions[ext] then
                 return true
