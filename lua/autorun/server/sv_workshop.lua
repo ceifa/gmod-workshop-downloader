@@ -1,6 +1,7 @@
 DOWNLOADER = {}
 DOWNLOADER.__index = DOWNLOADER
 
+-- Download any gmas with these extensions
 DOWNLOADER.ResourceExtensions = {
     --Models
     mdl = true,
@@ -16,19 +17,32 @@ DOWNLOADER.ResourceExtensions = {
     png = true
 }
 
-function DOWNLOADER:Traverse(subPath, basePath, foundExts)
-    local files, dirs = file.Find(subPath .. "*", basePath)
-
-    if not files then return end
-
-    for _, f in pairs(files) do
-        local ext = string.GetExtensionFromFilename(f)
-        foundExts[ext] = true
-        if ext == "bsp" and string.StripExtension(f) == game.GetMap() then return true end
+-- Download a gma with the current map if it's available
+function DOWNLOADER:IsCurrentMap(file, ext)
+    if ext == "bsp" and string.StripExtension(file) == game.GetMap() then
+        return true
     end
 
-    for _, d in pairs(dirs) do
-        if self:Traverse(subPath .. d .. "/", basePath, foundExts) then return true end
+    return false
+end
+
+-- Analyze each mounted workshop addon
+function DOWNLOADER:ParseAddon(currentPah, mountedGMAPath)
+    local files, dirs = file.Find(currentPah .. "*", mountedGMAPath)
+
+    if files then
+        for _, file in pairs(files) do
+            local ext = string.GetExtensionFromFilename(file)
+
+            if self.ResourceExtensions[ext] then return true end 
+            if self.IsCurrentMap(file, ext) then return true end
+        end
+    end
+
+    if dirs then
+        for _, newSubDir in pairs(dirs) do
+            if self:ParseAddon(currentPah .. newSubDir .. "/", mountedGMAPath) then return true end
+        end
     end
 end
 
@@ -41,7 +55,7 @@ function DOWNLOADER:AddWorkshopResources()
     for _, addon in pairs(addons) do
         if addon.downloaded and addon.mounted then
             local found_exts = {}
-            local shouldAdd = self:Traverse("", addon.title, found_exts)
+            local shouldAdd = self:ParseAddon("", addon.title, found_exts)
 
             -- if addon fails initial test but does not contain a map, check for resource files
             if not shouldAdd and not found_exts.bsp then
