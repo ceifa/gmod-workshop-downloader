@@ -65,6 +65,7 @@ function DOWNLOADER:AddWorkshopResources()
     print("[DOWNLOADER] FINISHED TO ADD RESOURCES: " .. totalAdded .. " ADDONS SELECTED")
 end
 
+-- Check if there are any unused playermodels on Pointshop
 function DOWNLOADER:CheckUnusedPlayermodels()
     local models = player_manager.AllValidModels()
     local totalNotFound = 0
@@ -94,6 +95,7 @@ function DOWNLOADER:CheckUnusedPlayermodels()
     print("[DOWNLOADER] FINISHED POINTSHOP SEARCH: " .. totalNotFound .. " PLAYERMODELS NOT FOUND")
 end
 
+-- Run once
 function DOWNLOADER:Start()
     self:AddWorkshopResources()
 
