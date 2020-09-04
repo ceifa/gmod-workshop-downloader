@@ -54,20 +54,7 @@ function DOWNLOADER:AddWorkshopResources()
 
     for _, addon in pairs(addons) do
         if addon.downloaded and addon.mounted then
-            local found_exts = {}
-            local shouldAdd = self:ParseAddon("", addon.title, found_exts)
-
-            -- if addon fails initial test but does not contain a map, check for resource files
-            if not shouldAdd and not found_exts.bsp then
-                for res_ext, _ in pairs(self.ResourceExtensions) do
-                    if found_exts[res_ext] then
-                        shouldAdd = true
-                        break
-                    end
-                end
-            end
-
-            if shouldAdd then
+            if self:ParseAddon("", addon.title) then
                 resource.AddWorkshop(addon.wsid)
                 totalAdded = totalAdded + 1
                 print(string.format("[DOWNLOADER] [+] %-10s %s", addon.wsid, addon.title))
