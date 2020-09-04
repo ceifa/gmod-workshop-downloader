@@ -14,7 +14,9 @@ DOWNLOADER.ResourceExtensions = {
     --Materials, Textures
     vmt = true,
     vtf = true,
-    png = true
+    png = true,
+    -- Particles
+    pcf = true
 }
 
 -- Download a gma with the current map if it's available
