@@ -11,4 +11,4 @@ It's the best solution for your server, only the right workshop files are select
 Play with your friends easily, don't ask them to subscribe to your addons;
 Don't spend time making a script manually, make it really automatic as it should be!
 
-Available at workshop to: https://steamcommunity.com/sharedfiles/filedetails/?id=2214712098
+Available at workshop: https://steamcommunity.com/sharedfiles/filedetails/?id=2214712098
