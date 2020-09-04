@@ -19,68 +19,63 @@ DOWNLOADER.ResourceExtensions = {
 }
 
 -- Select wich gmas are maps
-function DOWNLOADER:SelectMapGMAs(workshopAddons)
-    for k, addon in pairs(workshopAddons) do
-        local isMap = false
-        local _, dirs = file.Find("*", addon.title)
+function DOWNLOADER:ScanMapsGMA(addon)
+    local mapFiles = file.Find("maps/*.bsp", addon)
 
-        if dirs then
-            for _, subDir in pairs(dirs) do
-                if subDir == "maps" then
-                    isMap = true
-                    break
-                end
+    if mapFiles and #mapFiles > 0 then
+        local currentMap = game.GetMap()
+
+        for _, mapFile in ipairs(mapFiles) do
+            if string.StripExtension(mapFile) == currentMap then
+                return true
             end
-
-            workshopAddons[k].isMap = isMap
         end
+
+        return false
     end
 end
 
 -- Analyze each mounted workshop addon
-function DOWNLOADER:ScanGMA(currentPah, mountedGMAPath, isMap)
+function DOWNLOADER:ScanGMA(currentPah, mountedGMAPath)
     local files, dirs = file.Find(currentPah .. "*", mountedGMAPath)
 
     if files then
-        for _, subFile in pairs(files) do
+        for _, subFile in ipairs(files) do
             local ext = string.GetExtensionFromFilename(subFile)
-            local isMapExt = ext == "bsp"
 
-            -- Download the gma if...
-
-            -- it's the current map
-            if isMapExt then
-                local isCurrentMap = string.StripExtension(subFile) == game.GetMap()
-
-                return isCurrentMap
-            -- it's a addon with one of the listed extensions
-            elseif not isMap and self.ResourceExtensions[ext] then
+            if self.ResourceExtensions[ext] then
                 return true
             end
         end
     end
 
     if dirs then
-        for _, subDir in pairs(dirs) do
-            local result = self:ScanGMA(currentPah .. subDir .. "/", mountedGMAPath, isMap)
+        for _, subDir in ipairs(dirs) do
+            local result = self:ScanGMA(currentPah .. subDir .. "/", mountedGMAPath)
 
-            if result ~= nil then
+            if result then
                 return result
             end
         end
     end
 end
 
-function DOWNLOADER:AddWorkshopResources(workshopAddons)
+function DOWNLOADER:AddWorkshopResources()
+    local workshopAddons = engine.GetAddons()
+
     local totalAdded = 0
 
     print("[DOWNLOADER] SCANNING " .. #workshopAddons .. " ADDONS TO ADD RESOURCES...")
 
-    for _, addon in pairs(workshopAddons) do
-        if addon.downloaded and addon.mounted and self:ScanGMA("", addon.title, addon.isMap) then
-            resource.AddWorkshop(addon.wsid)
-            totalAdded = totalAdded + 1
-            print(string.format("[DOWNLOADER] [+] %-10s %s", addon.wsid, addon.title))
+    for _, addon in ipairs(workshopAddons) do
+        if addon.downloaded and addon.mounted then
+            local mapScan = self:ScanMapsGMA(addon.title)
+
+            if mapScan or (mapScan == nil and self:ScanGMA("", addon.title)) then
+                resource.AddWorkshop(addon.wsid)
+                totalAdded = totalAdded + 1
+                print(string.format("[DOWNLOADER] [+] %-10s %s", addon.wsid, addon.title))
+            end
         end
     end
 
@@ -119,10 +114,7 @@ end
 
 -- Run once
 function DOWNLOADER:Start(finishCallback)
-    local workshopAddons = engine.GetAddons()
-
-    self:SelectMapGMAs(workshopAddons)
-    self:AddWorkshopResources(workshopAddons)
+    self:AddWorkshopResources()
 
     if PS then
         timer.Simple(5, function()
