@@ -1,3 +1,9 @@
 include("autorun/server/sv_workshop.lua")
 
-DOWNLOADER:Start()
+DOWNLOADER = {}
+DOWNLOADER.__index = DOWNLOADER
+
+DOWNLOADER:Start(function()
+    hook.Run("WorkshopDownloader.Finished")
+    DOWNLOADER = nil
+end)
