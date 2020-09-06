@@ -18,6 +18,34 @@ DOWNLOADER.ResourceExtensions = {
     ttf = true
 }
 
+-- Last valid scanned workshop collection
+DOWNLOADER.CacheFile = "uwdcache.txt"
+
+-- Generate a unique name based on the collection items
+function DOWNLOADER:GenerateCollectionChecksum(workshopAddons)
+    local uniqueID = ""
+
+    for  _, addon in ipairs(workshopAddons) do
+        uniqueID = uniqueID .. addon.wsid
+    end
+
+    return util.CRC(uniqueID)
+end
+
+-- Load the cache file
+function DOWNLOADER:LoadCache(checksum)
+	if file.Exists(self.CacheFile, "DATA") then
+        local cache = util.JSONToTable(file.Read(self.CacheFile, "DATA"))
+
+        return cache.checksum == checksum and cache
+    end
+end
+
+-- Save a new cache file
+function DOWNLOADER:SaveCache(selectedAddons)
+    file.Write(self.CacheFile, util.TableToJSON(selectedAddons))
+end
+
 -- Select wich gmas are maps
 function DOWNLOADER:ScanMapsGMA(addon)
     local mapFiles = file.Find("maps/*.bsp", addon)
@@ -62,24 +90,38 @@ end
 
 function DOWNLOADER:AddWorkshopResources()
     local workshopAddons = engine.GetAddons()
-
+    local selectedAddons = {}
+    local checksum = self:GenerateCollectionChecksum(workshopAddons)
+    local cache = self:LoadCache(checksum)
     local totalAdded = 0
 
-    print("[DOWNLOADER] SCANNING " .. #workshopAddons .. " ADDONS TO ADD RESOURCES...")
+    if not cache then
+        print("[DOWNLOADER] SCANNING " .. #workshopAddons .. " ADDONS TO ADD RESOURCES...")
+    else
+        print("[DOWNLOADER] ADDING RESOURCES FOR " .. #cache .. " ADDONS FROM OUR CACHE FILE...")
+    end
 
-    for _, addon in ipairs(workshopAddons) do
-        if addon.downloaded and addon.mounted then
-            local mapScan = self:ScanMapsGMA(addon.title)
+    for _, addon in ipairs(cache or workshopAddons) do
+        if cache or addon.downloaded and addon.mounted then
+            local mapScan = not cache and self:ScanMapsGMA(addon.title)
 
-            if mapScan or (mapScan == nil and self:ScanGMA("", addon.title)) then
+            if cache or mapScan or (mapScan == nil and self:ScanGMA("", addon.title)) then
+                if not cache then
+                    table.insert(selectedAddons, addon)
+                    totalAdded = totalAdded + 1
+                end
                 resource.AddWorkshop(addon.wsid)
-                totalAdded = totalAdded + 1
                 print(string.format("[DOWNLOADER] [+] %-10s %s", addon.wsid, addon.title))
             end
         end
     end
 
-    print("[DOWNLOADER] FINISHED TO ADD RESOURCES: " .. totalAdded .. " ADDONS SELECTED")
+    print("[DOWNLOADER] FINISHED TO ADD RESOURCES" .. (cache and "" or ": " .. totalAdded .. " ADDONS SELECTED"))
+
+    if not cache then
+        selectedAddons.checksum = checksum
+        self:SaveCache(selectedAddons)
+    end
 end
 
 -- Check if there are any unused playermodels on Pointshop
