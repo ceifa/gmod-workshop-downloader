@@ -116,7 +116,7 @@ function DOWNLOADER:AddWorkshopResources()
         end
     end
 
-    print("[DOWNLOADER] FINISHED TO ADD RESOURCES" .. (not cache and ": " .. totalAdded .. " ADDONS SELECTED"))
+    print("[DOWNLOADER] FINISHED TO ADD RESOURCES" .. (cache and "" or ": " .. totalAdded .. " ADDONS SELECTED"))
 
     if not cache then
         selectedAddons.checksum = checksum
