@@ -30,8 +30,11 @@ end
 
 function MODULE:Run(context)
     for _, addon in ipairs(context.addons) do
-        if not table.HasValue(context.ignoreResources, addon.wsid) and HasUsingResource("", addon.title) then
-            table.insert(context.usingAddons, addon)
+        if not table.HasValue(context.ignoreResources, addon.wsid) then
+            local hasResources = addon.models > 0 or HasUsingResource("", addon.title)
+            if hasResources then
+                table.insert(context.usingAddons, addon)
+            end
         end
     end
 end
