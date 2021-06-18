@@ -5,7 +5,7 @@ end
 local files = file.Find("downloader/*.lua", "LUA")
 local modules = {}
 
-for _, moduleFile in pairs(files) do
+for _, moduleFile in ipairs(files) do
     table.insert(modules, include("downloader/" .. moduleFile))
 end
 

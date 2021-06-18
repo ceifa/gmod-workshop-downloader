@@ -2,7 +2,12 @@ local MODULE = {}
 MODULE.Priority = 10
 
 if PS then
-    concommand.Add("downloader_ps1_scan", function()
+    concommand.Add("downloader_ps1_scan", function(ply)
+        if ply and not ply:IsAdmin() then
+            ply:ChatPrint("You don't have access to this command!")
+            return
+        end
+
         local models = player_manager.AllValidModels()
         local totalNotFound = 0
 

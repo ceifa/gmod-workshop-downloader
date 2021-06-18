@@ -2,27 +2,10 @@ local MODULE = {}
 MODULE.Priority = 3
 
 -- Download any gmas with these extensions
-local resourceExtensions = {
-    --Models
-    mdl = true,
-    vtx = true,
-    vcd = true,
-    --Sounds
-    wav = true,
-    mp3 = true,
-    ogg = true,
-    --Materials, Textures
-    vmt = true,
-    vtf = true,
-    png = true,
-    -- Particles
-    pcf = true,
-    -- Resources
-    ttf = true
-}
+local resourceExtensions = include("downloader/resources.lua")
 
-local function HasUsingResource(currentPah, addonTitle)
-    local files, dirs = file.Find(currentPah .. "*", addonTitle)
+local function HasUsingResource(currentPath, addonTitle)
+    local files, dirs = file.Find(currentPath .. "*", addonTitle)
 
     if files then
         for _, subFile in ipairs(files) do
@@ -36,7 +19,7 @@ local function HasUsingResource(currentPah, addonTitle)
 
     if dirs then
         for _, subDir in ipairs(dirs) do
-            local result = HasUsingResource(currentPah .. subDir .. "/", addonTitle)
+            local result = HasUsingResource(currentPath .. subDir .. "/", addonTitle)
 
             if result then
                 return result
