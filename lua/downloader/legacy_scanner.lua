@@ -28,6 +28,13 @@ local function ScanAddons()
     local currentMap = game.GetMap()
 
     local legacyFiles = {}
+    local isFastDL = GetConVar("sv_downloadurl"):GetString() ~= "" and true
+    local isServerDL = not isFastDL
+
+    if isServerDL and not GetConVar("sv_allowdownload"):GetBool() then
+        print("[DOWNLOADER] ERROR! YOU ARE TRYING TO USE SERVERDL WITH 'sv_allowdownload' SET TO 0! CHANGE IT TO 1 BEFORE SCANNING. SKIPING STEP...")
+        return
+    end
 
     for _, folder in ipairs(folders or {}) do
         AddFiles("addons/" .. folder .. "/", "", legacyFiles)
@@ -46,6 +53,12 @@ local function ScanAddons()
     end
 
     print("[DOWNLOADER] FINISHED TO ADD LEGACY ADDONS: " .. #legacyFiles .. " FILES SELECTED")
+    if isFastDL then
+        print("[DOWNLOADER] YOUR ARE USING FASTDL. DOWNLOAD TIME CHANGES ACCORDING TO INTERNET SPEED")
+    else
+        -- ServerDL speed is limited to 20KBps
+        print("[DOWNLOADER] YOUR ARE USING SERVERDL")
+    end
 end
 
 function MODULE:Run(context)
