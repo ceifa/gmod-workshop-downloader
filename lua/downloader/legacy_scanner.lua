@@ -42,7 +42,7 @@ local function ScanAddons()
 
     for _, legacyFile in ipairs(legacyFiles) do
         print(string.format("[DOWNLOADER] [+] LEGACY '%s'", legacyFile))
-        resource.AddFile(legacyFile)
+        resource.AddSingleFile(legacyFile)
     end
 
     print("[DOWNLOADER] FINISHED TO ADD LEGACY ADDONS: " .. #legacyFiles .. " FILES SELECTED")
