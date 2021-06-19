@@ -1,7 +1,4 @@
 return {
-    -- Maps
-    nav = true,
-    ain = true,
     -- Models
     mdl = true,
     vtx = true,
