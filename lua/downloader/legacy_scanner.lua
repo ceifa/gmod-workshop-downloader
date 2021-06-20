@@ -34,7 +34,7 @@ local function ScanAddons()
     local uncompressedSize = 0
 
     if isServerDL and not GetConVar("sv_allowdownload"):GetBool() then
-        print("[DOWNLOADER] ERROR! YOU ARE TRYING TO USE SERVERDL WITH 'sv_allowdownload' SET TO 0! CHANGE IT TO 1 BEFORE SCANNING. SKIPING STEP...")
+        print("[DOWNLOADER] ERROR! YOU ARE TRYING TO USE SERVERDL WITH 'sv_allowdownload' SET TO 0! SKIPPING SCAN")
         return
     end
 
