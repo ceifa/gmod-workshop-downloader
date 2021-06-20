@@ -28,6 +28,9 @@ local function ScanAddons()
     local currentMap = game.GetMap()
 
     local legacyFiles = {}
+    local isFastDL = GetConVar("sv_downloadurl"):GetString() ~= ""
+    local isServerDL = not isFastDL
+    local downloadSize = 0
 
     for _, folder in ipairs(folders or {}) do
         AddFiles("addons/" .. folder .. "/", "", legacyFiles)
@@ -42,10 +45,24 @@ local function ScanAddons()
 
     for _, legacyFile in ipairs(legacyFiles) do
         print(string.format("[DOWNLOADER] [+] LEGACY '%s'", legacyFile))
-        resource.AddFile(legacyFile)
+        resource.AddSingleFile(legacyFile)
+        downloadSize = downloadSize + file.Size(legacyFile .. (isFastDL and file.Exists(legacyFile .. ".bz2", "GAME") and ".bz2" or ""), "GAME")
     end
 
+    downloadSize = math.Round(downloadSize/1000000, 2) -- Byte to Megabyte
+
     print("[DOWNLOADER] FINISHED TO ADD LEGACY ADDONS: " .. #legacyFiles .. " FILES SELECTED")
+    print("[DOWNLOADER] TOTAL DOWNLOAD SIZE: " .. downloadSize .. "MB")
+    if isFastDL then
+        print("[DOWNLOADER] USING FASTDL. DOWNLOAD TIME CHANGES ACCORDING TO INTERNET SPEED")
+    else
+        local time = ((downloadSize * 1000) / 20) / 60 -- ServerDL speed is limited to 20KBps
+        print("[DOWNLOADER] USING SERVERDL. MINIMUM FULL DOWNLOAD TIME: " .. time .. " MINUTES")
+    end
+
+    if isServerDL and not GetConVar("sv_allowdownload"):GetBool() then
+        ErrorNoHalt("[DOWNLOADER] WARNING! YOU ARE TRYING TO USE SERVERDL WITH 'sv_allowdownload' SET TO 0!\n")
+    end
 end
 
 function MODULE:Run(context)
