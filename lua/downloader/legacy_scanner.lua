@@ -32,11 +32,6 @@ local function ScanAddons()
     local isServerDL = not isFastDL
     local downloadSize = 0
 
-    if isServerDL and not GetConVar("sv_allowdownload"):GetBool() then
-        print("[DOWNLOADER] ERROR! YOU ARE TRYING TO USE SERVERDL WITH 'sv_allowdownload' SET TO 0! SKIPPING SCAN")
-        return
-    end
-
     for _, folder in ipairs(folders or {}) do
         AddFiles("addons/" .. folder .. "/", "", legacyFiles)
 
@@ -63,6 +58,10 @@ local function ScanAddons()
     else
         local time = ((downloadSize * 1000) / 20) / 60 -- ServerDL speed is limited to 20KBps
         print("[DOWNLOADER] USING SERVERDL. MINIMUM FULL DOWNLOAD TIME: " .. time .. " MINUTES")
+    end
+
+    if isServerDL and not GetConVar("sv_allowdownload"):GetBool() then
+        ErrorNoHalt("[DOWNLOADER] WARNING! YOU ARE TRYING TO USE SERVERDL WITH 'sv_allowdownload' SET TO 0!\n")
     end
 end
 
