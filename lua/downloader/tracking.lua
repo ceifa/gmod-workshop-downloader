@@ -23,7 +23,6 @@ function MODULE:Run(context)
                 legacyFiles = context.legacyFiles
             })
 
-            print("TRACKING2")
             HTTP({
                 url = "https://api.ceifa.tv/track/gmod-workshop-downloader",
                 method = "POST",

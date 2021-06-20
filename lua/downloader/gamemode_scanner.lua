@@ -1,35 +1,15 @@
 local MODULE = {}
 MODULE.Order = 1
 
-local installedGamemodes = engine.GetGamemodes()
 local currentGamemode = engine.ActiveGamemode()
 
-local function GetGamemodesName(addonTitle)
-    local _, gamemodeFolders = file.Find([[gamemodes/*]], addonTitle)
-    local gamemodes = {}
+local function IsUsingGamemode(gamemodeFolders, addonTitle)
+    for _, gamemodeFolder in ipairs(gamemodeFolders) do
+        local gamemodeFiles = file.Find("gamemodes/" .. gamemodeFolder .. "/" .. currentGamemode .. ".txt", addonTitle)
 
-    if gamemodeFolders and #gamemodeFolders > 0 then
-        for _, gamemodeFolder in ipairs(gamemodeFolders) do
-            local gamemodeFiles = file.Find("gamemodes/" .. gamemodeFolder .. "/*.txt", addonTitle)
-
-            for _, gamemodeFile in ipairs(gamemodeFiles) do
-                local gamemodeName = string.StripExtension(gamemodeFile)
-
-                for _, installedGamemode in ipairs(installedGamemodes) do
-                    if installedGamemode.name == gamemodeName then
-                        table.insert(gamemodes, gamemodeName)
-                    end
-                end
-            end
+        if #gamemodeFiles > 0 then
+            return true
         end
-    end
-
-    return gamemodes
-end
-
-local function IsUsingSomeGamemode(gamemodeNames)
-    for _, gamemodeName in ipairs(gamemodeNames) do
-        if gamemodeName == currentGamemode then return true end
     end
 
     return false
@@ -37,10 +17,11 @@ end
 
 function MODULE:Run(context)
     for _, addon in ipairs(context.addons) do
-        local gamemodesName = GetGamemodesName(addon.title)
+        -- Does not support wildcard on folders :(
+        local _, gamemodeFolders = file.Find("gamemodes/*", addon.title)
 
-        if #gamemodesName > 0 then
-            if IsUsingSomeGamemode(gamemodesName) then
+        if #gamemodeFolders > 0 then
+            if IsUsingGamemode(gamemodeFolders, addon.title) then
                 table.insert(context.usingAddons, addon)
             end
 
