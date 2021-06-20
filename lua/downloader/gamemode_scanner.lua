@@ -1,7 +1,8 @@
 local MODULE = {}
-MODULE.Priority = 1
+MODULE.Order = 1
 
 local installedGamemodes = engine.GetGamemodes()
+local currentGamemode = engine.ActiveGamemode()
 
 local function GetGamemodesName(addonTitle)
     local _, gamemodeFolders = file.Find([[gamemodes/*]], addonTitle)
@@ -28,7 +29,7 @@ end
 
 local function IsUsingSomeGamemode(gamemodeNames)
     for _, gamemodeName in ipairs(gamemodeNames) do
-        if gamemodeName == engine.ActiveGamemode() then return true end
+        if gamemodeName == currentGamemode then return true end
     end
 
     return false

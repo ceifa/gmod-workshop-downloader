@@ -1,5 +1,5 @@
 local MODULE = {}
-MODULE.Priority = 3
+MODULE.Order = 3
 
 -- Download any gmas with these extensions
 local resourceExtensions = include("downloader/resources.lua")

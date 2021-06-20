@@ -1,5 +1,5 @@
 local MODULE = {}
-MODULE.Priority = 0
+MODULE.Order = 0
 
 function MODULE:Run(context)
     for key, addon in ipairs(context.addons) do

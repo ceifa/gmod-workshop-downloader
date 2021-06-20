@@ -1,5 +1,5 @@
 local MODULE = {}
-MODULE.Priority = 10
+MODULE.Order = 10
 
 if PS then
     concommand.Add("downloader_ps1_scan", function(ply)

@@ -9,12 +9,20 @@ for _, moduleFile in ipairs(files) do
     table.insert(modules, include("downloader/" .. moduleFile))
 end
 
-table.SortByMember(modules, "Priority", true)
+table.sort(modules, function(a, b)
+    if a.Order == nil or b.Order == nil then
+        return a.Order ~= nil
+    end
+
+    return a.Order < b.Order
+end)
 
 local context = {
     addons = engine.GetAddons(),
     ignoreResources = {},
-    usingAddons = {}
+    usingAddons = {},
+    track = {},
+    started = SysTime()
 }
 
 print("[DOWNLOADER] SCANNING " .. #context.addons .. " ADDONS TO ADD RESOURCES...")

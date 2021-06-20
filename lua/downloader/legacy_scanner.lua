@@ -1,5 +1,5 @@
 local MODULE = {}
-MODULE.Priority = 10
+MODULE.Order = 5
 
 local resourceExtensions = include("downloader/resources.lua")
 local shouldScan = CreateConVar("downloader_legacy_scan_danger", 0, FCVAR_ARCHIVE, "Should scan for legacy addons (DANGER!!!)")
@@ -23,7 +23,7 @@ local function AddFiles(originPath, currentPath, legacyFiles)
     end
 end
 
-local function ScanAddons()
+local function ScanAddons(context)
     local _, folders = file.Find("addons/*", "MOD")
     local currentMap = game.GetMap()
 
@@ -49,26 +49,31 @@ local function ScanAddons()
         downloadSize = downloadSize + file.Size(legacyFile .. (isFastDL and file.Exists(legacyFile .. ".bz2", "GAME") and ".bz2" or ""), "GAME")
     end
 
-    downloadSize = math.Round(downloadSize/1000000, 2) -- Byte to Megabyte
+    downloadSize = math.Round(downloadSize / 1000000, 2) -- Byte to Megabyte
 
-    print("[DOWNLOADER] FINISHED TO ADD LEGACY ADDONS: " .. #legacyFiles .. " FILES SELECTED")
-    print("[DOWNLOADER] TOTAL DOWNLOAD SIZE: " .. downloadSize .. "MB")
+    print(string.format("[DOWNLOADER] FINISHED TO ADD LEGACY ADDONS: %s FILES SELECTED (%s MB)", #legacyFiles, downloadSize))
     if isFastDL then
         print("[DOWNLOADER] USING FASTDL. DOWNLOAD TIME CHANGES ACCORDING TO INTERNET SPEED")
     else
         -- Note: ServerDL speed is limited to 30KBps, but commonly reaches 20KBps or less, so I'm using 25KBps to approximate time
         local time = ((downloadSize * 1000) / 25) / 60
-        print("[DOWNLOADER] USING SERVERDL. APPROXIMATE FULL DOWNLOAD TIME: " .. time .. " MINUTES")
+        print(string.format("[DOWNLOADER] USING SERVERDL. APPROXIMATE FULL DOWNLOAD TIME: %.2f MINUTES", time))
     end
 
     if isServerDL and not GetConVar("sv_allowdownload"):GetBool() then
         ErrorNoHalt("[DOWNLOADER] WARNING! YOU ARE TRYING TO USE SERVERDL WITH 'sv_allowdownload' SET TO 0!\n")
     end
+
+    if context then
+        context.legacyDownloadSize = downloadSize
+        context.legacyFiles = #legacyFiles
+    end
 end
 
 function MODULE:Run(context)
-    if shouldScan:GetBool() then
-        ScanAddons()
+    context.legacyScan = shouldScan:GetBool()
+    if context.legacyScan then
+        ScanAddons(context)
     end
 end
 
