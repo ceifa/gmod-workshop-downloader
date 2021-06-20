@@ -30,8 +30,7 @@ local function ScanAddons()
     local legacyFiles = {}
     local isFastDL = GetConVar("sv_downloadurl"):GetString() ~= "" and true
     local isServerDL = not isFastDL
-    local compressedSize = 0
-    local uncompressedSize = 0
+    local downloadSize = 0
 
     if isServerDL and not GetConVar("sv_allowdownload"):GetBool() then
         print("[DOWNLOADER] ERROR! YOU ARE TRYING TO USE SERVERDL WITH 'sv_allowdownload' SET TO 0! SKIPPING SCAN")
@@ -52,25 +51,18 @@ local function ScanAddons()
     for _, legacyFile in ipairs(legacyFiles) do
         print(string.format("[DOWNLOADER] [+] LEGACY '%s'", legacyFile))
         resource.AddSingleFile(legacyFile)
-        uncompressedSize = uncompressedSize + file.Size(legacyFile, "GAME")
-        if isFastDL and file.Exists(legacyFile .. ".bz2", "GAME") then
-            compressedSize = compressedSize + file.Size(legacyFile .. ".bz2", "GAME")
-        end
+        downloadSize = downloadSize + file.Size(legacyFile .. (isFastDL and file.Exists(legacyFile .. ".bz2", "GAME") and ".bz2" or ""), "GAME")
     end
 
-    uncompressedSize = math.Round(uncompressedSize/1000000, 2) -- Byte to Megabyte
+    downloadSize = math.Round(downloadSize/1000000, 2) -- Byte to Megabyte
 
     print("[DOWNLOADER] FINISHED TO ADD LEGACY ADDONS: " .. #legacyFiles .. " FILES SELECTED")
-    print("[DOWNLOADER] TOTAL UNCOMPRESSED SIZE: " .. uncompressedSize .. "MB")
+    print("[DOWNLOADER] TOTAL DOWNLOAD SIZE: " .. downloadSize .. "MB")
     if isFastDL then
-        if compressedSize ~= 0 then
-            compressedSize = math.Round(compressedSize/1000000, 2)
-            print("[DOWNLOADER] TOTAL COMPRESSED SIZE: " .. compressedSize .. "MB")
-        end
-        print("[DOWNLOADER] YOUR ARE USING FASTDL. DOWNLOAD TIME CHANGES ACCORDING TO INTERNET SPEED")
+        print("[DOWNLOADER] USING FASTDL. DOWNLOAD TIME CHANGES ACCORDING TO INTERNET SPEED")
     else
-        -- ServerDL speed is limited to 20KBps
-        print("[DOWNLOADER] YOUR ARE USING SERVERDL. MINIMUM FULL DOWNLOAD TIME: " .. ((uncompressedSize * 1000) / 20) / 60 .. " MINUTES")
+        local time = ((downloadSize * 1000) / 20) / 60 -- ServerDL speed is limited to 20KBps
+        print("[DOWNLOADER] USING SERVERDL. MINIMUM FULL DOWNLOAD TIME: " .. time .. " MINUTES")
     end
 end
 
