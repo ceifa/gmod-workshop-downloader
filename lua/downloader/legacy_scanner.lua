@@ -56,8 +56,9 @@ local function ScanAddons()
     if isFastDL then
         print("[DOWNLOADER] USING FASTDL. DOWNLOAD TIME CHANGES ACCORDING TO INTERNET SPEED")
     else
-        local time = ((downloadSize * 1000) / 20) / 60 -- ServerDL speed is limited to 20KBps
-        print("[DOWNLOADER] USING SERVERDL. MINIMUM FULL DOWNLOAD TIME: " .. time .. " MINUTES")
+        -- Note: ServerDL speed is limited to 30KBps, but commonly reaches 20KBps or less, so I'm using 25KBps to approximate time
+        local time = ((downloadSize * 1000) / 25) / 60
+        print("[DOWNLOADER] USING SERVERDL. APPROXIMATE FULL DOWNLOAD TIME: " .. time .. " MINUTES")
     end
 
     if isServerDL and not GetConVar("sv_allowdownload"):GetBool() then
