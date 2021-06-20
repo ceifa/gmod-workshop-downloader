@@ -28,7 +28,7 @@ local function ScanAddons()
     local currentMap = game.GetMap()
 
     local legacyFiles = {}
-    local isFastDL = GetConVar("sv_downloadurl"):GetString() ~= "" and true
+    local isFastDL = GetConVar("sv_downloadurl"):GetString() ~= ""
     local isServerDL = not isFastDL
     local downloadSize = 0
 
