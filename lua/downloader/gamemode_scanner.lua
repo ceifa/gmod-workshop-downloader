@@ -20,7 +20,9 @@ function MODULE:Run(context)
     local gamemodeFound = false
 
     for _, addon in ipairs(context.addons) do
-        if addon.tags:find("Gamemode") then
+        local isGamemode = addon.tags and addon.tags:lower():find("gamemode")
+
+        if isGamemode then
             if not gamemodeFound then
                 -- Does not support wildcard on folders :(
                 local _, gamemodeFolders = file.Find("gamemodes/*", addon.title)

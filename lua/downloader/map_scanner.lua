@@ -5,7 +5,7 @@ local currentMap = game.GetMap()
 
 function MODULE:Run(context)
     for _, addon in ipairs(context.addons) do
-        local isMap = addon.tags and addon.tags:find("map")
+        local isMap = addon.tags and addon.tags:lower():find("map")
 
         if isMap then
             -- file.Exists does not work here
