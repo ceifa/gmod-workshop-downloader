@@ -3,7 +3,7 @@ MODULE.Order = 100
 
 local disableTracking = CreateConVar("downloader_disable_tracking", 0, FCVAR_ARCHIVE, "Should disable tracking report")
 
-function MODULE:Run(context)
+function MODULE:Run()
     if not disableTracking:GetBool() then
         local finished = SysTime()
 
@@ -14,14 +14,14 @@ function MODULE:Run(context)
                 gamemode = engine.ActiveGamemode(),
                 ip = game.GetIPAddress(),
                 dedicated = game.IsDedicated(),
-                elapsed = finished - context.started,
-                addons = #context.addons,
-                usingAddons = #context.usingAddons,
+                elapsed = finished - self.context.started,
+                addons = #self.context.addons,
+                usingAddons = #self.context.usingAddons,
                 fastDl = GetConVar("sv_downloadurl"):GetString() ~= "",
-                legacyScan = context.legacyScan,
-                legacyDownloadSize = context.legacyDownloadSize,
-                legacyFiles = context.legacyFiles,
-                cacheQuantity = context.cacheQuantity
+                legacyScan = self.context.legacyScan,
+                legacyDownloadSize = self.context.legacyDownloadSize,
+                legacyFiles = self.context.legacyFiles,
+                cacheQuantity = self.context.cacheQuantity
             })
 
             HTTP({

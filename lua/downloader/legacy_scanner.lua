@@ -64,22 +64,19 @@ local function ScanAddons(context)
         ErrorNoHalt("[DOWNLOADER] WARNING! YOU ARE TRYING TO USE SERVERDL WITH 'sv_allowdownload' SET TO 0!\n")
     end
 
-    if context then
-        context.legacyDownloadSize = downloadSize
-        context.legacyFiles = #legacyFiles
-    end
+    context.legacyDownloadSize = downloadSize
+    context.legacyFiles = #legacyFiles
 end
 
-function MODULE:Run(context)
-    context.legacyScan = shouldScan:GetBool()
-    if context.legacyScan then
-        ScanAddons(context)
+function MODULE:Run()
+    if shouldScan:GetBool() then
+        ScanAddons(self.context)
     end
 end
 
 cvars.AddChangeCallback("downloader_legacy_scan_danger", function(convar_name, value_old, value_new)
     if value_new == "1" then
-        ScanAddons()
+        ScanAddons(MODULE.context)
     end
 end)
 

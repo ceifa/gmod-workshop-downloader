@@ -33,8 +33,9 @@ end
 print("[DOWNLOADER] SCANNING " .. #context.addons .. " ADDONS TO ADD RESOURCES...")
 
 for _, downloaderModule in ipairs(modules) do
+    downloaderModule.context = context
     if downloaderModule.Run then
-        downloaderModule:Run(context)
+        downloaderModule:Run()
     end
 end
 

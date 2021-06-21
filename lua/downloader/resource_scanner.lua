@@ -28,12 +28,12 @@ local function HasUsingResource(currentPath, addonTitle)
     end
 end
 
-function MODULE:Run(context)
-    for _, addon in ipairs(context.addons) do
-        if not context.ignoreResources[addon.wsid] then
+function MODULE:Run()
+    for _, addon in ipairs(self.context.addons) do
+        if not self.context.ignoreResources[addon.wsid] then
             local hasResources = addon.models > 0 or HasUsingResource("", addon.title)
             if hasResources then
-                table.insert(context.usingAddons, addon)
+                table.insert(self.context.usingAddons, addon)
             end
         end
     end

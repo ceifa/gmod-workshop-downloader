@@ -16,10 +16,10 @@ local function IsUsingGamemode(gamemodeFolders, addonTitle)
     return false
 end
 
-function MODULE:Run(context)
+function MODULE:Run()
     local gamemodeFound = false
 
-    for _, addon in ipairs(context.addons) do
+    for _, addon in ipairs(self.context.addons) do
         local isGamemode = addon.tags and addon.tags:lower():find("gamemode")
 
         if isGamemode then
@@ -28,13 +28,13 @@ function MODULE:Run(context)
                 local _, gamemodeFolders = file.Find("gamemodes/*", addon.title)
 
                 if IsUsingGamemode(gamemodeFolders, addon.title) then
-                    table.insert(context.usingAddons, addon)
+                    table.insert(self.context.usingAddons, addon)
                     gamemodeFound = true
                 end
             end
 
             -- Is probably a gamemode addon, resources should be ignored
-            context.ignoreResources[addon.wsid] = true
+            self.context.ignoreResources[addon.wsid] = true
         end
     end
 end
