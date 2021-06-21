@@ -1,5 +1,5 @@
 local MODULE = {}
-MODULE.Order = 5
+MODULE.Order = 6
 
 local resourceExtensions = include("downloader/resources.lua")
 local shouldScan = CreateConVar("downloader_legacy_scan_danger", 0, FCVAR_ARCHIVE, "Should scan for legacy addons (DANGER!!!)")

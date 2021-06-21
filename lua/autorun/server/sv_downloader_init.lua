@@ -18,12 +18,17 @@ table.sort(modules, function(a, b)
 end)
 
 local context = {
+    dataFolder = "uwd",
     addons = engine.GetAddons(),
     ignoreResources = {},
     usingAddons = {},
     track = {},
     started = SysTime()
 }
+
+if not file.Exists(context.dataFolder, "DATA") then
+    file.CreateDir(context.dataFolder)
+end
 
 print("[DOWNLOADER] SCANNING " .. #context.addons .. " ADDONS TO ADD RESOURCES...")
 
