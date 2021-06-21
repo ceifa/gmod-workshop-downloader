@@ -3,29 +3,19 @@ MODULE.Order = 2
 
 local currentMap = game.GetMap()
 
-local function GetMapFiles(addonTitle)
-    return file.Find("maps/*.bsp", addonTitle) or {}
-end
-
-local function IsUsingSomeMap(mapFiles)
-    for _, mapFile in ipairs(mapFiles) do
-        if string.StripExtension(mapFile) == currentMap then return true end
-    end
-
-    return false
-end
-
 function MODULE:Run(context)
     for _, addon in ipairs(context.addons) do
-        local mapFiles = GetMapFiles(addon.title)
+        local isMap = addon.tags and addon.tags:find("map")
 
-        if #mapFiles > 0 then
-            if IsUsingSomeMap(mapFiles) then
+        if isMap then
+            -- file.Exists does not work here
+            local mapFile = file.Find("maps/" .. currentMap  .. ".bsp", addon.title)
+            if #mapFile == 1 then
                 table.insert(context.usingAddons, addon)
             end
 
             -- Is probably a map addon, resources should be ignored
-            table.insert(context.ignoreResources, addon.wsid)
+            context.ignoreResources[addon.wsid] = true
         end
     end
 end

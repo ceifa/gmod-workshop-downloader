@@ -20,14 +20,18 @@ function MODULE:Run(context)
                 fastDl = GetConVar("sv_downloadurl"):GetString() ~= "",
                 legacyScan = context.legacyScan,
                 legacyDownloadSize = context.legacyDownloadSize,
-                legacyFiles = context.legacyFiles
+                legacyFiles = context.legacyFiles,
+                cacheQuantity = context.cacheQuantity
             })
 
             HTTP({
                 url = "https://api.ceifa.tv/track/gmod-workshop-downloader",
                 method = "POST",
                 type = "application/json",
-                body = body
+                body = body,
+                failed = function(reason)
+                    ErrorNoHalt("[DOWNLOADER ]Failed to send track data: " .. reason .. "\n")
+                end
             })
         end)
     end

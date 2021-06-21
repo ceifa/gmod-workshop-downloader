@@ -7,21 +7,20 @@ function MODULE:Run(context)
     local cache = util.JSONToTable(file.Read(cacheFile, "DATA") or "{}")
 
     for _, addon in ipairs(context.addons) do
-        local scanned = cache[tonumber(addon.wsid)] -- I'm using tonumber because https://github.com/Facepunch/garrysmod-issues/issues/3561#issuecomment-428479149
+        -- I'm using tonumber because https://github.com/Facepunch/garrysmod-issues/issues/3561#issuecomment-428479149
+        local scanned = cache[tonumber(addon.wsid)]
 
-        if scanned then
+        -- cache exists and is up to date?
+        if scanned and scanned.updated == addon.updated then
             if scanned.hasResource then
-                if scanned.updated == addon.updated then
-                    table.insert(context.usingAddons, addon)
-                    table.insert(context.ignoreResources, addon.wsid)
-                end
-            else
-                table.insert(context.ignoreResources, addon.wsid)
+                table.insert(context.usingAddons, addon)
             end
+
+            context.ignoreResources[addon.wsid] = true
         end
     end
 
-    file.Write(cacheFile, util.TableToJSON(cache))
+    context.cacheQuantity = table.Count(cache)
 end
 
 return MODULE

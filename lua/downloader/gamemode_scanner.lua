@@ -5,9 +5,10 @@ local currentGamemode = engine.ActiveGamemode()
 
 local function IsUsingGamemode(gamemodeFolders, addonTitle)
     for _, gamemodeFolder in ipairs(gamemodeFolders) do
+        -- file.Exists does not work here
         local gamemodeFiles = file.Find("gamemodes/" .. gamemodeFolder .. "/" .. currentGamemode .. ".txt", addonTitle)
 
-        if #gamemodeFiles > 0 then
+        if #gamemodeFiles == 1 then
             return true
         end
     end
@@ -16,17 +17,22 @@ local function IsUsingGamemode(gamemodeFolders, addonTitle)
 end
 
 function MODULE:Run(context)
-    for _, addon in ipairs(context.addons) do
-        -- Does not support wildcard on folders :(
-        local _, gamemodeFolders = file.Find("gamemodes/*", addon.title)
+    local gamemodeFound = false
 
-        if #gamemodeFolders > 0 then
-            if IsUsingGamemode(gamemodeFolders, addon.title) then
-                table.insert(context.usingAddons, addon)
+    for _, addon in ipairs(context.addons) do
+        if addon.tags:find("Gamemode") then
+            if not gamemodeFound then
+                -- Does not support wildcard on folders :(
+                local _, gamemodeFolders = file.Find("gamemodes/*", addon.title)
+
+                if IsUsingGamemode(gamemodeFolders, addon.title) then
+                    table.insert(context.usingAddons, addon)
+                    gamemodeFound = true
+                end
             end
 
             -- Is probably a gamemode addon, resources should be ignored
-            table.insert(context.ignoreResources, addon.wsid)
+            context.ignoreResources[addon.wsid] = true
         end
     end
 end
