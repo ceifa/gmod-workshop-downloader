@@ -21,7 +21,6 @@ local context = {
     dataFolder = "uwd",
     addons = engine.GetAddons(),
     ignoreResources = {},
-    cache = {},
     usingAddons = {},
     track = {},
     started = SysTime()
