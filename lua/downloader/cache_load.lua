@@ -7,7 +7,7 @@ function MODULE:Run(context)
     local cache = util.JSONToTable(file.Read(cacheFile, "DATA") or "{}")
 
     for _, addon in ipairs(context.addons) do
-        local scanned = cache[tonumber(addon.wsid)] -- BUG: JSONToTable loads wsid as a number instead of a string
+        local scanned = cache[tonumber(addon.wsid)] -- I'm using tonumber because https://github.com/Facepunch/garrysmod-issues/issues/3561#issuecomment-428479149
 
         if scanned then
             if scanned.hasResource then
