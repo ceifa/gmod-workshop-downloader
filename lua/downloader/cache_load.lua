@@ -2,7 +2,7 @@ local MODULE = {}
 MODULE.Order = 3
 
 function MODULE:Run(context)
-    -- cache = { [number wsid] = { bool isResource, string updated }, ... }
+    -- cache = { [number wsid] = { bool hasResource, string updated }, ... }
     local cacheFile = context.dataFolder .. "/workshop_cache.txt"
     local cache = util.JSONToTable(file.Read(cacheFile, "DATA") or "{}")
 
@@ -10,7 +10,7 @@ function MODULE:Run(context)
         local scanned = cache[tonumber(addon.wsid)] -- BUG: JSONToTable loads wsid as a number instead of a string
 
         if scanned then
-            if scanned.isResource then
+            if scanned.hasResource then
                 if scanned.updated == addon.updated then
                     table.insert(context.usingAddons, addon)
                     table.insert(context.ignoreResources, addon.wsid)

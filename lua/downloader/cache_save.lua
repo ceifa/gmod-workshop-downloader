@@ -2,13 +2,13 @@ local MODULE = {}
 MODULE.Order = 5
 
 function MODULE:Run(context)
-    -- cache = { [number wsid] = { bool isResource, string updated }, ... }
+    -- cache = { [number wsid] = { bool hasResource, string updated }, ... }
     local cacheFile = context.dataFolder .. "/workshop_cache.txt"
     local cache = {}
 
     for _, addon in ipairs(context.addons) do
         cache[addon.wsid] = {
-            isResource = table.HasValue(context.usingAddons, addon),
+            hasResource = table.HasValue(context.usingAddons, addon),
             updated = addon.updated
         }
     end
