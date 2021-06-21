@@ -4,7 +4,7 @@ MODULE.Priority = 3
 function MODULE:Run(context)
     -- cache = { [number wsid] = number updated, ... }
     local cacheFile = context.dataFolder .. "/workshop_cache.txt"
-    local cache = file.Exists(cacheFile, "DATA") and util.JSONToTable(file.Read(cacheFile, "DATA")) or {}
+    local cache = util.JSONToTable(file.Read(cacheFile, "DATA") or "{}")
 
     for _, addon in ipairs(context.addons) do
         local scanned = cache[tonumber(addon.wsid)]
