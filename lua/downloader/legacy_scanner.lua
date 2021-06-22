@@ -27,7 +27,6 @@ local function ScanAddons(context)
     local _, folders = file.Find("addons/*", "MOD")
     local currentMap = game.GetMap()
 
-    local legacyFiles = {}
     local isFastDL = GetConVar("sv_downloadurl"):GetString() ~= ""
     local isServerDL = not isFastDL
     local downloadSize = 0
@@ -35,19 +34,19 @@ local function ScanAddons(context)
     totalLegacy = #totalLegacy
 
     for _, folder in ipairs(folders or {}) do
-        AddFiles("addons/" .. folder .. "/", "", legacyFiles)
+        AddFiles("addons/" .. folder .. "/", "", context.legacyFiles)
 
         local mapFiles = file.Find("addons/" .. folder .. "/maps/*.bsp", "MOD") or {}
         for _, mapFile in ipairs(mapFiles) do
             if string.StripExtension(mapFile) == currentMap then
-                table.insert(legacyFiles, "maps/" .. mapFile .. ".bsp")
+                table.insert(context.legacyFiles, "maps/" .. mapFile .. ".bsp")
             end
         end
     end
 
     print("[DOWNLOADER] SCANNING " .. totalLegacy .. " LEGACY ADDONS TO ADD RESOURCES...")
 
-    for _, legacyFile in ipairs(legacyFiles) do
+    for _, legacyFile in ipairs(context.legacyFiles) do
         print(string.format("[DOWNLOADER] [+] LEGACY '%s'", legacyFile))
         resource.AddSingleFile(legacyFile)
         downloadSize = downloadSize + file.Size(legacyFile .. (isFastDL and file.Exists(legacyFile .. ".bz2", "GAME") and ".bz2" or ""), "GAME")
@@ -55,7 +54,7 @@ local function ScanAddons(context)
 
     downloadSize = math.Round(downloadSize / 1000000, 2) -- Byte to Megabyte
 
-    print(string.format("[DOWNLOADER] FINISHED TO ADD LEGACY ADDONS: %s FILES SELECTED (%s MB)", #legacyFiles, downloadSize))
+    print(string.format("[DOWNLOADER] FINISHED TO ADD LEGACY ADDONS: %s FILES SELECTED (%s MB)", #context.legacyFiles, downloadSize))
     if isFastDL then
         print("[DOWNLOADER] USING FASTDL. DOWNLOAD TIME CHANGES ACCORDING TO INTERNET SPEED")
     else
@@ -69,7 +68,6 @@ local function ScanAddons(context)
     end
 
     context.legacyDownloadSize = downloadSize
-    context.legacyFiles = #legacyFiles
 end
 
 function MODULE:Run()

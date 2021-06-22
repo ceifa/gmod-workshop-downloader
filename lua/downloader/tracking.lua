@@ -20,7 +20,7 @@ function MODULE:Run()
                 fastDl = GetConVar("sv_downloadurl"):GetString() ~= "",
                 legacyScan = self.context.legacyScan,
                 legacyDownloadSize = self.context.legacyDownloadSize,
-                legacyFiles = self.context.legacyFiles,
+                legacyFiles = #self.context.legacyFiles,
                 cacheQuantity = self.context.cacheQuantity
             })
 

@@ -22,6 +22,7 @@ local context = {
     addons = engine.GetAddons(),
     ignoreResources = {},
     usingAddons = {},
+    legacyFiles = {},
     track = {},
     started = SysTime()
 }
