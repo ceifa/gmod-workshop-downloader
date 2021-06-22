@@ -72,14 +72,20 @@ local function ScanAddons(context)
     if dumpLegacyCache:GetBool() and #legacyFiles > 0 then
         local cacheFile = "uwd/dump_legacy_cache.txt"
         local cache = "if SERVER then\n"
+        local legacyFilesAux = {}
+
+        for _, legacyFile in ipairs(legacyFiles) do
+            legacyFile.addon = string.upper(legacyFile.addon)
+            legacyFilesAux[legacyFile.addon] = legacyFilesAux[legacyFile.addon] or {}
+            table.insert(legacyFilesAux[legacyFile.addon], legacyFile.path)
+        end
 
         local lastAddon
-        for _, legacyFile in ipairs(legacyFiles) do
-            if legacyFile.addon ~= lastAddon then
-                cache = cache .. "    -- " .. legacyFile.addon .. "\n"
-                lastAddon = legacyFile.addon
+        for addonName, paths in SortedPairs(legacyFilesAux) do
+            cache = cache .. "    -- " .. addonName .. "\n"
+            for _, legacyFile in SortedPairs(paths) do
+                cache = cache .. "    resource.AddSingleFile(\"" .. legacyFile .. "\")\n"
             end
-            cache = cache .. "    resource.AddSingleFile(\"" .. legacyFile.path .. "\")\n"
         end
 
         cache = cache .. "end\n"
