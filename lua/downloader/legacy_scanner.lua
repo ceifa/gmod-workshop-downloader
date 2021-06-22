@@ -90,7 +90,7 @@ local function ScanAddons(context)
 
         cache = cache .. "end\n"
 
-        RunConsoleCommand("downloader_dump_legacy_cache", 0)
+        dumpLegacyCache:SetBool(false)
 
         file.Write(cacheFile, cache)
 

@@ -27,7 +27,7 @@ function MODULE:Run(context)
 
         cache = cache .. "end\n"
 
-        RunConsoleCommand("downloader_dump_workshop_cache", 0)
+        dumpWorkshopCache:SetBool(false)
 
         file.Write(cacheFile, cache)
 
