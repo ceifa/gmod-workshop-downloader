@@ -1,5 +1,5 @@
 local MODULE = {}
-MODULE.Order = 5
+MODULE.Order = 7
 
 local dumpWorkshopCache = CreateConVar("downloader_dump_workshop_cache", 0, FCVAR_ARCHIVE, "Should dump the next Workshop resources scan into a txt file")
 

@@ -1,5 +1,5 @@
 local MODULE = {}
-MODULE.Order = 6
+MODULE.Order = 0
 
 local resourceExtensions = include("downloader/resources.lua")
 local shouldScan = CreateConVar("downloader_legacy_scan_danger", 0, FCVAR_ARCHIVE, "Should scan for legacy addons (DANGER!!!)")
@@ -32,6 +32,10 @@ local function ScanAddons(context)
     local isFastDL = GetConVar("sv_downloadurl"):GetString() ~= ""
     local isServerDL = not isFastDL
     local downloadSize = 0
+    local _, totalLegacy = file.Find("addons/*", "MOD")
+    totalLegacy = #totalLegacy
+
+    print("[DOWNLOADER] SCANNING " .. totalLegacy .. " LEGACY ADDONS TO ADD RESOURCES...")
 
     for _, folder in ipairs(folders or {}) do
         AddFiles("addons/" .. folder .. "/", "", legacyFiles)

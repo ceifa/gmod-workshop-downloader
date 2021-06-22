@@ -1,5 +1,5 @@
 local MODULE = {}
-MODULE.Order = 3
+MODULE.Order = 4
 
 function MODULE:Run(context)
     -- cache = { [number wsid] = { bool hasResource, string updated }, ... }

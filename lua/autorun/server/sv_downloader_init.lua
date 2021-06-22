@@ -30,19 +30,10 @@ if not file.Exists(context.dataFolder, "DATA") then
     file.CreateDir(context.dataFolder)
 end
 
-print("[DOWNLOADER] SCANNING " .. #context.addons .. " ADDONS TO ADD RESOURCES...")
-
 for _, downloaderModule in ipairs(modules) do
     if downloaderModule.Run then
         downloaderModule:Run(context)
     end
 end
-
-for _, usingAddon in ipairs(context.usingAddons) do
-    resource.AddWorkshop(usingAddon.wsid)
-    print(string.format("[DOWNLOADER] [+] %-10s %s", usingAddon.wsid, usingAddon.title))
-end
-
-print("[DOWNLOADER] FINISHED TO ADD RESOURCES: " .. #context.usingAddons .. " ADDONS SELECTED")
 
 -- Garbage collection will clean everything by itself after execution

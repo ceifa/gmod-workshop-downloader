@@ -1,5 +1,5 @@
 local MODULE = {}
-MODULE.Order = 2
+MODULE.Order = 3
 
 local currentMap = game.GetMap()
 
