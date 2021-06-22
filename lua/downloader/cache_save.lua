@@ -3,6 +3,8 @@ MODULE.Order = 7
 
 local dumpWorkshopCache = CreateConVar("downloader_dump_workshop_cache", 0, FCVAR_ARCHIVE, "Should dump the next Workshop resources scan into a txt file")
 
+local dumpWorkshopCache = CreateConVar("downloader_dump_workshop_cache", 0, FCVAR_ARCHIVE, "Should dump the next Workshop resources scan into a txt file")
+
 function MODULE:Run(context)
     -- cache = { [number wsid] = { bool hasResource, string updated }, ... }
     local cacheFile = context.dataFolder .. "/workshop_cache.txt"
