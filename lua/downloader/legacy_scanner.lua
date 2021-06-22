@@ -31,6 +31,8 @@ local function ScanAddons(context)
     local isFastDL = GetConVar("sv_downloadurl"):GetString() ~= ""
     local isServerDL = not isFastDL
     local downloadSize = 0
+    local _, totalLegacy = file.Find("addons/*", "MOD")
+    totalLegacy = #totalLegacy
 
     for _, folder in ipairs(folders or {}) do
         AddFiles("addons/" .. folder .. "/", "", legacyFiles)
@@ -42,6 +44,8 @@ local function ScanAddons(context)
             end
         end
     end
+
+    print("[DOWNLOADER] SCANNING " .. totalLegacy .. " LEGACY ADDONS TO ADD RESOURCES...")
 
     for _, legacyFile in ipairs(legacyFiles) do
         print(string.format("[DOWNLOADER] [+] LEGACY '%s'", legacyFile))
