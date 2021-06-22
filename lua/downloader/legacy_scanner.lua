@@ -53,15 +53,14 @@ local function ScanAddons(context)
     print("[DOWNLOADER] SCANNING " .. #folders .. " LEGACY ADDONS TO ADD RESOURCES...")
 
     for _, folder in ipairs(folders or {}) do
-        local upperAddonName = string.upper(folder)
-        legacyFilesPerAddon[upperAddonName] = {}
+        legacyFilesPerAddon[folder] = {}
 
-        AddFiles("addons/" .. folder .. "/", "", legacyFilesPerAddon[upperAddonName])
+        AddFiles("addons/" .. folder .. "/", "", legacyFilesPerAddon[folder])
 
         local mapFiles = file.Find("addons/" .. folder .. "/maps/*.bsp", "MOD") or {}
         for _, mapFile in ipairs(mapFiles) do
             if string.StripExtension(mapFile) == currentMap then
-                table.insert(legacyFilesPerAddon[upperAddonName], "maps/" .. mapFile .. ".bsp")
+                table.insert(legacyFilesPerAddon[folder], "maps/" .. mapFile .. ".bsp")
             end
         end
     end
@@ -71,7 +70,7 @@ local function ScanAddons(context)
     local downloadSize = 0
 
     for addonName, legacyFiles in pairs(legacyFilesPerAddon) do
-        print(string.format("[DOWNLOADER] [+] LEGACY '%s': '%s' FILES", addonName, #legacyFiles))
+        print(string.format("[DOWNLOADER] [+] LEGACY %-4d FILES ADDED FOR %s", #legacyFiles, addonName))
 
         for _, legacyFile in ipairs(legacyFiles) do
             resource.AddSingleFile(legacyFile)
