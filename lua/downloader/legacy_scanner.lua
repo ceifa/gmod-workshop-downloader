@@ -9,10 +9,11 @@ local function AddFiles(originPath, currentPath, legacyFiles)
     local files, dirs = file.Find(originPath .. currentPath .. "*", "MOD")
 
     if files then
+        local addonName = string.Explode("/", originPath)[2]
         for _, subFile in ipairs(files) do
             local ext = string.GetExtensionFromFilename(subFile)
             if resourceExtensions[ext] then
-                table.insert(legacyFiles, { addon = string.Explode("/", originPath)[2], path = currentPath .. subFile })
+                table.insert(legacyFiles, { addon = addonName, path = currentPath .. subFile })
             end
         end
     end
