@@ -1,5 +1,5 @@
 local MODULE = {}
-MODULE.Order = 0
+MODULE.Order = 1
 
 function MODULE:Run(context)
     for key, addon in ipairs(context.addons) do
@@ -7,6 +7,8 @@ function MODULE:Run(context)
             table.remove(context.addons, key)
         end
     end
+
+    print("[DOWNLOADER] SCANNING " .. #context.addons .. " ADDONS TO ADD RESOURCES...")
 end
 
 return MODULE
