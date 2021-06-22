@@ -1,5 +1,5 @@
 local MODULE = {}
-MODULE.Order = 1
+MODULE.Order = 2
 
 local currentGamemode = engine.ActiveGamemode()
 
