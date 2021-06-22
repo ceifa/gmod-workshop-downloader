@@ -3,15 +3,17 @@ MODULE.Order = 6
 
 local resourceExtensions = include("downloader/resources.lua")
 local shouldScan = CreateConVar("downloader_legacy_scan_danger", 0, FCVAR_ARCHIVE, "Should scan for legacy addons (DANGER!!!)")
+local dumpLegacyCache = CreateConVar("downloader_dump_legacy_cache", 0, FCVAR_ARCHIVE, "Should dump the next Legacy Addon resources scan into a txt file")
 
 local function AddFiles(originPath, currentPath, legacyFiles)
     local files, dirs = file.Find(originPath .. currentPath .. "*", "MOD")
 
     if files then
+        local addonName = string.Explode("/", originPath)[2]
         for _, subFile in ipairs(files) do
             local ext = string.GetExtensionFromFilename(subFile)
             if resourceExtensions[ext] then
-                table.insert(legacyFiles, currentPath .. subFile)
+                table.insert(legacyFiles, { addon = addonName, path = currentPath .. subFile })
             end
         end
     end
@@ -38,15 +40,15 @@ local function ScanAddons(context)
         local mapFiles = file.Find("addons/" .. folder .. "/maps/*.bsp", "MOD") or {}
         for _, mapFile in ipairs(mapFiles) do
             if string.StripExtension(mapFile) == currentMap then
-                table.insert(legacyFiles, "maps/" .. mapFile .. ".bsp")
+                table.insert(legacyFiles, { addon = folder, path = "maps/" .. mapFile .. ".bsp" })
             end
         end
     end
 
     for _, legacyFile in ipairs(legacyFiles) do
-        print(string.format("[DOWNLOADER] [+] LEGACY '%s'", legacyFile))
-        resource.AddSingleFile(legacyFile)
-        downloadSize = downloadSize + file.Size(legacyFile .. (isFastDL and file.Exists(legacyFile .. ".bz2", "GAME") and ".bz2" or ""), "GAME")
+        print(string.format("[DOWNLOADER] [+] LEGACY '%s'", legacyFile.path))
+        resource.AddSingleFile(legacyFile.path)
+        downloadSize = downloadSize + file.Size(legacyFile.path .. (isFastDL and file.Exists(legacyFile.path .. ".bz2", "GAME") and ".bz2" or ""), "GAME")
     end
 
     downloadSize = math.Round(downloadSize / 1000000, 2) -- Byte to Megabyte
@@ -66,7 +68,34 @@ local function ScanAddons(context)
 
     if context then
         context.legacyDownloadSize = downloadSize
-        context.legacyFiles = #legacyFiles
+    end
+
+    if dumpLegacyCache:GetBool() and #legacyFiles > 0 then
+        local cacheFile = "uwd/dump_legacy_cache.txt"
+        local cache = "if SERVER then\n"
+        local legacyFilesPerAddon = {}
+
+        for _, legacyFile in ipairs(legacyFiles) do
+            legacyFile.addon = string.upper(legacyFile.addon)
+            legacyFilesPerAddon[legacyFile.addon] = legacyFilesPerAddon[legacyFile.addon] or {}
+            table.insert(legacyFilesPerAddon[legacyFile.addon], legacyFile.path)
+        end
+
+        local lastAddon
+        for addonName, paths in SortedPairs(legacyFilesPerAddon) do
+            cache = cache .. "    -- " .. addonName .. "\n"
+            for _, legacyFile in SortedPairs(paths) do
+                cache = cache .. "    resource.AddSingleFile(\"" .. legacyFile .. "\")\n"
+            end
+        end
+
+        cache = cache .. "end\n"
+
+        dumpLegacyCache:SetBool(false)
+
+        file.Write(cacheFile, cache)
+
+        print("[DOWNLOADER] LEGACY ADDON RESOURCES DUMPED INTO '" .. cacheFile .. "'")
     end
 end
 
