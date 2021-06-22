@@ -20,17 +20,13 @@ function MODULE:Run(context)
     local gamemodeFound = false
 
     for _, addon in ipairs(context.addons) do
-        local isGamemode = addon.tags and addon.tags:lower():find("gamemode")
+        -- Does not support wildcard on folders :(
+        local _, gamemodeFolders = file.Find("gamemodes/*", addon.title)
 
-        if isGamemode then
-            if not gamemodeFound then
-                -- Does not support wildcard on folders :(
-                local _, gamemodeFolders = file.Find("gamemodes/*", addon.title)
-
-                if IsUsingGamemode(gamemodeFolders, addon.title) then
-                    table.insert(context.usingAddons, addon)
-                    gamemodeFound = true
-                end
+        if #gamemodeFolders > 0 then
+            if not gamemodeFound and IsUsingGamemode(gamemodeFolders, addon.title) then
+                table.insert(context.usingAddons, addon)
+                gamemodeFound = true
             end
 
             -- Is probably a gamemode addon, resources should be ignored
