@@ -1,7 +1,24 @@
 local MODULE = {}
 MODULE.Order = 7
 
-local dumpWorkshopCache = CreateConVar("downloader_dump_workshop_cache", 0, FCVAR_ARCHIVE, "Should dump the next Workshop resources scan into a txt file")
+local shouldDumpWorkshopCache = CreateConVar("downloader_dump_workshop_cache", 0, FCVAR_ARCHIVE, "Should dump the next Workshop resources scan into a txt file")
+
+local function DumpWorkshopCache(context)
+    local cacheFile = context.dataFolder .. "/dump_workshop_cache.txt"
+    local cache = "if SERVER then\n"
+
+    for _, addon in ipairs(context.usingAddons) do
+        cache = cache .. "    resource.AddWorkshop(\"" .. addon.wsid .. "\") -- " .. addon.title .. "\n"
+    end
+
+    cache = cache .. "end\n"
+
+    shouldDumpWorkshopCache:SetBool(false)
+
+    file.Write(cacheFile, cache)
+
+    print("[DOWNLOADER] RESOURCES DUMPED INTO '" .. cacheFile .. "'")
+end
 
 function MODULE:Run(context)
     -- cache = { [number wsid] = { bool hasResource, string updated }, ... }
@@ -17,21 +34,8 @@ function MODULE:Run(context)
 
     file.Write(cacheFile, util.TableToJSON(cache))
 
-    if dumpWorkshopCache:GetBool() and #context.usingAddons > 0 then
-        local cacheFile = context.dataFolder .. "/dump_workshop_cache.txt"
-        local cache = "if SERVER then\n"
-
-        for _, addon in ipairs(context.usingAddons) do
-            cache = cache .. "    resource.AddWorkshop(\"" .. addon.wsid .. "\") -- " .. addon.title .. "\n"
-        end
-
-        cache = cache .. "end\n"
-
-        dumpWorkshopCache:SetBool(false)
-
-        file.Write(cacheFile, cache)
-
-        print("[DOWNLOADER] RESOURCES DUMPED INTO '" .. cacheFile .. "'")
+    if shouldDumpWorkshopCache:GetBool() and #context.usingAddons > 0 then
+        DumpWorkshopCache(context)
     end
 end
 
