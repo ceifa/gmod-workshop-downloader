@@ -17,13 +17,15 @@ local function IsCurrentGamemode(gamemodeFolders, addonTitle)
         totalGamemodeFiles = totalGamemodeFiles + #gamemodeFiles
 
         for _, gamemodeFile in ipairs(gamemodeFiles) do
-            if gamemodeFile == currentGamemode then
+            if gamemodeFile == currentGamemode .. ".txt" then
                 return true
             end
         end
     end
 
-    return totalGamemodeFiles == 0 and nil or false
+    if totalGamemodeFiles > 0 then
+        return false
+    end
 end
 
 function MODULE:Run(context)
