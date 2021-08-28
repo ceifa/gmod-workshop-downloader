@@ -2,7 +2,8 @@ local MODULE = {}
 MODULE.Order = 1
 
 function MODULE:Run(context)
-    for key, addon in ipairs(context.addons) do
+    for key = #context.addons, 1, -1 do
+        local addon = context.addons[key]
         if not addon.downloaded or not addon.mounted then
             table.remove(context.addons, key)
         end
