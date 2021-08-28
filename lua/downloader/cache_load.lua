@@ -1,5 +1,5 @@
 local MODULE = {}
-MODULE.Order = 4
+MODULE.Order = 2
 
 function MODULE:Run(context)
     -- cache = { [number wsid] = { bool hasResource, string updated }, ... }
@@ -18,6 +18,7 @@ function MODULE:Run(context)
                 end
 
                 context.ignoreResources[addon.wsid] = true
+                context.gamemodeAddons[addon.wsid] = scanned.isGamemode
             end
         end
     end
