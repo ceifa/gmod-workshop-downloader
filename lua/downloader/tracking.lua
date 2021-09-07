@@ -6,9 +6,6 @@ local disableTracking = CreateConVar("downloader_disable_tracking", 0, FCVAR_ARC
 function MODULE:Run(context)
     if not disableTracking:GetBool() then
         local finished = SysTime()
-        print("=========================================")
-        print(finished - context.started)
-        print("=========================================")
 
         -- Defer tracking request
         timer.Simple(12, function()
