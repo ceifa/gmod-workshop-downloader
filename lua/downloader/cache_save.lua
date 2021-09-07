@@ -28,7 +28,8 @@ function MODULE:Run(context)
     for _, addon in ipairs(context.addons) do
         cache[addon.wsid] = {
             hasResource = table.HasValue(context.usingAddons, addon),
-            updated = addon.updated
+            updated = addon.updated,
+            isGamemode = context.gamemodeAddons[addon.wsid] == true
         }
     end
 

@@ -1,5 +1,5 @@
 local MODULE = {}
-MODULE.Order = 2
+MODULE.Order = 3
 
 local currentGamemode = engine.ActiveGamemode()
 
@@ -30,21 +30,25 @@ end
 
 function MODULE:Run(context)
     for _, addon in ipairs(context.addons) do
-        -- Does not support wildcard on folders :(
-        local _, gamemodeFolders = file.Find("gamemodes/*", addon.title)
+        if context.gamemodeAddons[addon.wsid] ~= false then
+            -- Does not support wildcard on folders :(
+            local _, gamemodeFolders = file.Find("gamemodes/*", addon.title)
 
-        if #gamemodeFolders > 0 then
-            -- true if it's current gamemode
-            -- false if it's a gamemode but not the current
-            -- nil if it's a false positive, probably not a gamemode
-            local isCurrentGamemode = IsCurrentGamemode(gamemodeFolders, addon.title)
-            if isCurrentGamemode ~= nil then
-                if isCurrentGamemode then
-                    table.insert(context.usingAddons, addon)
+            if #gamemodeFolders > 0 then
+                context.gamemodeAddons[addon.wsid] = true
+
+                -- true if it's current gamemode
+                -- false if it's a gamemode but not the current
+                -- nil if it's a false positive, probably not a gamemode
+                local isCurrentGamemode = IsCurrentGamemode(gamemodeFolders, addon.title)
+                if isCurrentGamemode ~= nil then
+                    if isCurrentGamemode then
+                        table.insert(context.usingAddons, addon)
+                    end
+
+                    -- Is probably a gamemode addon, resources should be ignored
+                    context.ignoreResources[addon.wsid] = true
                 end
-
-                -- Is probably a gamemode addon, resources should be ignored
-                context.ignoreResources[addon.wsid] = true
             end
         end
     end
