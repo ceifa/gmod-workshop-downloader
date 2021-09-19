@@ -34,6 +34,7 @@ function MODULE:Run(context)
             local hasResources = addon.models > 0 or HasUsingResource("", addon.title)
             if hasResources then
                 table.insert(context.usingAddons, addon)
+                context.addonsToCache[addon.wsid] = true
             end
         end
     end

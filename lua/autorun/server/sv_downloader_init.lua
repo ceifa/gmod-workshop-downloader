@@ -24,7 +24,8 @@ local context = {
     usingAddons = {},
     track = {},
     started = SysTime(),
-    gamemodeAddons = {}
+    gamemodeAddons = {},
+    addonsToCache = {}
 }
 
 if not file.Exists(context.dataFolder, "DATA") then
