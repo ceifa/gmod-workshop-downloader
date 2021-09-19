@@ -14,6 +14,7 @@ function MODULE:Run(context)
         if scanned and scanned.updated == addon.updated then
             if scanned.hasResource then
                 table.insert(context.usingAddons, addon)
+                context.addonsToCache[addon.wsid] = true
             end
 
             context.ignoreResources[addon.wsid] = true
