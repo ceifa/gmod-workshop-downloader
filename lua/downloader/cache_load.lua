@@ -4,7 +4,7 @@ MODULE.Order = 2
 function MODULE:Run(context)
     -- cache = { [number wsid] = { bool hasResource, string updated }, ... }
     local cacheFile = context.dataFolder .. "/workshop_cache.txt"
-    local cache = util.JSONToTable(file.Read(cacheFile, "DATA") or "{}")
+    local cache = util.JSONToTable(file.Read(cacheFile, "DATA")) or {}
 
     for _, addon in ipairs(context.addons) do
         -- tonumber because of https://github.com/Facepunch/garrysmod-issues/issues/3561#issuecomment-428479149

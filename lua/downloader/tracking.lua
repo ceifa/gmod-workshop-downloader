@@ -30,7 +30,7 @@ function MODULE:Run(context)
                 type = "application/json",
                 body = body,
                 failed = function(reason)
-                    ErrorNoHalt("[DOWNLOADER ]Failed to send track data: " .. reason .. "\n")
+                    ErrorNoHalt("[DOWNLOADER] Failed to send track data: " .. reason .. "\n")
                 end
             })
         end)
