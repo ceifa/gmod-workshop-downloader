@@ -11,7 +11,6 @@ local function IsCurrentGamemode(gamemodeFolders, addonTitle)
             return true
         end
 
-        -- file.Exists does not work here
         local gamemodeFiles = file.Find("gamemodes/" .. gamemodeFolder .. "/*.txt", addonTitle)
 
         totalGamemodeFiles = totalGamemodeFiles + #gamemodeFiles
