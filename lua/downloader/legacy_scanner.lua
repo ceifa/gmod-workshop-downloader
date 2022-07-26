@@ -3,8 +3,10 @@ MODULE.Order = 0
 
 local resourceExtensions = include("downloader/resources.lua")
 
-local shouldScan = CreateConVar("downloader_legacy_scan_danger", 0, FCVAR_ARCHIVE, "Should scan for legacy addons (DANGER!!!)")
-local shouldDumpLegacyCache = CreateConVar("downloader_dump_legacy_cache", 0, FCVAR_ARCHIVE, "Should dump the next Legacy Addon resources scan into a txt file")
+local shouldScan = CreateConVar("downloader_legacy_scan_danger", 0, FCVAR_ARCHIVE,
+    "Should scan for legacy addons (DANGER!!!)")
+local shouldDumpLegacyCache = CreateConVar("downloader_dump_legacy_cache", 0, FCVAR_ARCHIVE,
+    "Should dump the next Legacy Addon resources scan into a txt file")
 
 local function DumpLegacyCache(legacyFilesPerAddon)
     local cacheFile = "uwd/dump_legacy_cache.txt"
@@ -60,7 +62,7 @@ local function ScanAddons(context)
         local mapFiles = file.Find("addons/" .. folder .. "/maps/*.bsp", "MOD") or {}
         for _, mapFile in ipairs(mapFiles) do
             if string.StripExtension(mapFile) == currentMap then
-                table.insert(legacyFilesPerAddon[folder], "maps/" .. mapFile .. ".bsp")
+                table.insert(legacyFilesPerAddon[folder], "maps/" .. mapFile)
             end
         end
     end
@@ -68,6 +70,9 @@ local function ScanAddons(context)
     local isFastDL = GetConVar("sv_downloadurl"):GetString() ~= ""
     local isServerDL = not isFastDL
     local downloadSize = 0
+    local fileQuantity = 0
+
+    local netMaxFileSize = GetConVar("net_maxfilesize"):GetInt()
 
     for addonName, legacyFiles in pairs(legacyFilesPerAddon) do
         print(string.format("[DOWNLOADER] [+] LEGACY %-4d FILES ADDED FOR %s", #legacyFiles, addonName))
@@ -76,13 +81,20 @@ local function ScanAddons(context)
             resource.AddSingleFile(legacyFile)
 
             local extension = isFastDL and file.Exists(legacyFile .. ".bz2", "GAME") and ".bz2" or ""
-            downloadSize = downloadSize + file.Size(legacyFile .. extension, "GAME")
+            local fileSize = math.Round(file.Size(legacyFile .. extension, "GAME") / 1000000, 2)
+            if isServerDL and fileSize > netMaxFileSize then
+                ErrorNoHalt(string.format(
+                    "[DOWNLOADER] [WARNING] LEGACY FILE %s IS TOO BIG %d MB > %d MB (USE 'net_maxfilesize 64' TO INCREASE ITS MAXIMUM SIZE)\n",
+                    legacyFile, fileSize, netMaxFileSize))
+            end
+
+            downloadSize = downloadSize + fileSize
+            fileQuantity = fileQuantity + 1
         end
     end
 
-    downloadSize = math.Round(downloadSize / 1000000, 2) -- Byte to Megabyte
-
-    print(string.format("[DOWNLOADER] FINISHED TO ADD LEGACY ADDONS: %s MB OF FILES SELECTED", downloadSize))
+    print(string.format("[DOWNLOADER] FINISHED TO ADD LEGACY ADDONS: %d MB OF %d FILES SELECTED", downloadSize,
+        fileQuantity))
 
     if isFastDL then
         print("[DOWNLOADER] USING FASTDL. DOWNLOAD TIME CHANGES ACCORDING TO INTERNET SPEED")
@@ -94,6 +106,10 @@ local function ScanAddons(context)
 
     if isServerDL and not GetConVar("sv_allowdownload"):GetBool() then
         ErrorNoHalt("[DOWNLOADER] WARNING! YOU ARE TRYING TO USE SERVERDL WITH 'sv_allowdownload' SET TO 0!\n")
+    end
+
+    if fileQuantity > 8192 then
+        ErrorNoHalt("[DOWNLOADER] WARNING! YOU ARE TRYING TO DOWNLOAD MORE THAN 8192 FILES WITH SERVERDL!\n")
     end
 
     if context then
@@ -117,6 +133,6 @@ cvars.AddChangeCallback("downloader_legacy_scan_danger", function(convar_name, v
     if value_new == "1" then
         ScanAddons()
     end
-end)
+end, "downloader_legacy_scan_danger")
 
 return MODULE
