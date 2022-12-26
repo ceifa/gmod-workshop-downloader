@@ -22,7 +22,6 @@ local context = {
     addons = engine.GetAddons(),
     ignoreResources = {},
     usingAddons = {},
-    track = {},
     started = SysTime(),
     gamemodeAddons = {},
     addonsToCache = {}
