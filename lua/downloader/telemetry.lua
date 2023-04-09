@@ -4,6 +4,7 @@ MODULE.Order = 100
 local disableTelemetry = CreateConVar("downloader_disable_telemetry", 0, FCVAR_ARCHIVE, "Should disable telemetry report")
 
 function MODULE:Run(context)
+    do return end -- Remove this line when we get a working url
     if not disableTelemetry:GetBool() then
         local finished = SysTime()
 
