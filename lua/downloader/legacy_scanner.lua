@@ -131,7 +131,6 @@ end
 
 cvars.AddChangeCallback("downloader_legacy_scan_danger", function(convar_name, value_old, value_new)
     if value_new == "1" then
-        print("yo")
         ScanAddons()
     end
 end, "downloader_legacy_scan_danger")
