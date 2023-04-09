@@ -75,7 +75,7 @@ local function ScanAddons(context)
     local netMaxFileSize = GetConVar("net_maxfilesize"):GetInt()
 
     for addonName, legacyFiles in pairs(legacyFilesPerAddon) do
-        print(string.format("[DOWNLOADER] [+] LEGACY %-4d FILES ADDED FOR %s", #legacyFiles, addonName))
+        print(string.format("[DOWNLOADER] [+] LEGACY %4d FILES ADDED FOR %s", #legacyFiles, addonName))
 
         for _, legacyFile in ipairs(legacyFiles) do
             resource.AddSingleFile(legacyFile)
@@ -84,7 +84,7 @@ local function ScanAddons(context)
             local fileSize = math.Round(file.Size(legacyFile .. extension, "GAME") / 1000000, 2)
             if isServerDL and fileSize > netMaxFileSize then
                 ErrorNoHalt(string.format(
-                    "[DOWNLOADER] [WARNING] LEGACY FILE %s IS TOO BIG %d MB > %d MB (USE 'net_maxfilesize 64' TO INCREASE ITS MAXIMUM SIZE)\n",
+                    "[DOWNLOADER] [WARNING] LEGACY FILE '%s' IS TOO BIG (%d MB)!! CURRENT LIMIT IS %d MB. EXECUTE 'net_maxfilesize' COMMAND TO INCREASE THE SIZE UP TO 64 MB!\n",
                     legacyFile, fileSize, netMaxFileSize))
             end
 
@@ -131,6 +131,7 @@ end
 
 cvars.AddChangeCallback("downloader_legacy_scan_danger", function(convar_name, value_old, value_new)
     if value_new == "1" then
+        print("yo")
         ScanAddons()
     end
 end, "downloader_legacy_scan_danger")
