@@ -31,10 +31,28 @@ if not file.Exists(context.dataFolder, "DATA") then
     file.CreateDir(context.dataFolder)
 end
 
-for _, downloaderModule in ipairs(modules) do
+local function ExecuteModule(index)
+    local downloaderModule = modules[index]
+
+    if downloaderModule.Condition then
+        if not downloaderModule:Condition(context) then
+            timer.Simple(0.2, function()
+                ExecuteModule(index)
+            end)
+
+            return
+        end
+    end
+
     if downloaderModule.Run then
         downloaderModule:Run(context)
     end
+
+    if modules[index + 1] then
+        ExecuteModule(index + 1)
+    end
 end
+
+ExecuteModule(1)
 
 -- Garbage collection will clean everything by itself after execution
