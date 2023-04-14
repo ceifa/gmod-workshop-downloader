@@ -4,6 +4,10 @@ MODULE.Order = 5
 -- Download any gmas with these extensions
 local resourceExtensions = include("downloader/resources.lua")
 
+function MODULE:Condition(context)
+    return context.mapInfoFinished
+end
+
 local function HasUsingResource(currentPath, addonTitle)
     local files, dirs = file.Find(currentPath .. "*", addonTitle)
 

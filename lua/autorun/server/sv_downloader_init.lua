@@ -19,6 +19,7 @@ end)
 
 local context = {
     dataFolder = "uwd",
+    mapInfoFinished = false,
     addons = engine.GetAddons(),
     ignoreResources = {},
     usingAddons = {},
