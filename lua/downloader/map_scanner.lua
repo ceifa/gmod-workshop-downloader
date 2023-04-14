@@ -5,9 +5,11 @@ local currentMap = game.GetMap()
 
 function MODULE:Run(context)
     local foundMap = false
+    local addonsByWsid = {}
 
     for _, addon in ipairs(context.addons) do
         local isMap = addon.tags and addon.tags:lower():find("map")
+        addonsByWsid[addon.wsid] = addon
 
         if isMap then
             if file.Exists("maps/" .. currentMap  .. ".bsp", addon.title) then
@@ -18,7 +20,9 @@ function MODULE:Run(context)
                 http.Fetch('https://steamcommunity.com/sharedfiles/filedetails/?id=' .. addon.wsid,
                 function(body)
                     for wsid in string.gmatch(body, '<a href="https://steamcommunity%.com/workshop/filedetails/%?id=(%d+)" target="_blank">') do
-                        context.ignoreResources[wsid] = false
+                        if addonsByWsid[wsid] then
+                            table.insert(context.usingAddons, addonsByWsid[wsid])
+                        end
                     end
                     context.mapInfoFinished = true
                 end,
