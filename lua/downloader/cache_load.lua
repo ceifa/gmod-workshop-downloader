@@ -2,7 +2,6 @@ local MODULE = {}
 MODULE.Order = 2
 
 function MODULE:Run(context)
-    -- cache = { [number wsid] = { bool hasResource, string updated }, ... }
     local cacheFile = context.dataFolder .. "/workshop_cache.txt"
     local cache = util.JSONToTable(file.Read(cacheFile, "DATA") or "{}") or {}
 
@@ -19,6 +18,17 @@ function MODULE:Run(context)
 
             context.ignoreResources[addon.wsid] = true
             context.gamemodeAddons[addon.wsid] = scanned.isGamemode
+            context.manualAddons[addon.wsid] = scanned.manual
+
+            if scanned.scanResult then -- Compatibility with older caches
+                context.scanResult[addon.wsid] = scanned.scanResult
+            else
+                if scanned.hasResource then
+                    context.scanResult[addon.wsid] = { selected = true, type = "Resources" }
+                else
+                    context.scanResult[addon.wsid] = { selected = false, type = "Lua" }
+                end
+            end
         end
     end
 
