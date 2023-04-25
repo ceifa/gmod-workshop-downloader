@@ -2,6 +2,9 @@ if game.SinglePlayer() then
     return
 end
 
+util.AddNetworkString("uwd_exchange_scan_result")
+util.AddNetworkString("uwd_set_manual_selection")
+
 local files = file.Find("downloader/*.lua", "LUA")
 local modules = {}
 
@@ -24,7 +27,9 @@ local context = {
     usingAddons = {},
     started = SysTime(),
     gamemodeAddons = {},
-    addonsToCache = {}
+    addonsToCache = {},
+    manualAddons = {},
+    scanResult = {}
 }
 
 if not file.Exists(context.dataFolder, "DATA") then
@@ -37,4 +42,4 @@ for _, downloaderModule in ipairs(modules) do
     end
 end
 
--- Garbage collection will clean everything by itself after execution
+-- Garbage collection will clean the context and other local vars by itself after execution

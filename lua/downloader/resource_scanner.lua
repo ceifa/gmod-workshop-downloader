@@ -35,6 +35,9 @@ function MODULE:Run(context)
             if hasResources then
                 table.insert(context.usingAddons, addon)
                 context.addonsToCache[addon.wsid] = true
+                context.scanResult[addon.wsid] = { selected = true, type = "Resources" }
+            else
+                context.scanResult[addon.wsid] = { selected = false, type = "Lua" }
             end
         end
     end

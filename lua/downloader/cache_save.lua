@@ -1,5 +1,5 @@
 local MODULE = {}
-MODULE.Order = 7
+MODULE.Order = 8
 
 local shouldDumpWorkshopCache = CreateConVar("downloader_dump_workshop_cache", 0, FCVAR_ARCHIVE, "Should dump the next Workshop resources scan into a txt file")
 
@@ -21,7 +21,6 @@ local function DumpWorkshopCache(context)
 end
 
 function MODULE:Run(context)
-    -- cache = { [number wsid] = { bool hasResource, string updated }, ... }
     local cacheFile = context.dataFolder .. "/workshop_cache.txt"
     local cache = {}
 
@@ -29,7 +28,8 @@ function MODULE:Run(context)
         cache[addon.wsid] = {
             hasResource = context.addonsToCache[addon.wsid] == true,
             updated = addon.updated,
-            isGamemode = context.gamemodeAddons[addon.wsid] == true
+            isGamemode = context.gamemodeAddons[addon.wsid] == true,
+            manual = context.manualAddons[addon.wsid]
         }
     end
 

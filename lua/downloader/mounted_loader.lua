@@ -1,5 +1,5 @@
 local MODULE = {}
-MODULE.Order = 6
+MODULE.Order = 7
 
 function MODULE:Run(context)
     for _, usingAddon in ipairs(context.usingAddons) do
