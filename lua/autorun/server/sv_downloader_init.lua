@@ -36,41 +36,10 @@ if not file.Exists(context.dataFolder, "DATA") then
     file.CreateDir(context.dataFolder)
 end
 
-net.Receive("uwd_exchange_scan_result", function(len, ply)
-    local scanResult = table.Copy(context.scanResult)
-
-    for wsid, value in pairs(context.manualAddons) do
-        if scanResult[wsid] then
-            scanResult[wsid].cachedManual = value
-        end
-    end
-
-    scanResult = util.TableToJSON(scanResult)
-
-    net.Start("uwd_exchange_scan_result")
-    net.WriteString(scanResult) -- Lazy
-    net.Send(ply)
-end)
-
-net.Receive("uwd_set_manual_selection", function(len, ply)
-    if not ply:IsAdmin() then return end
-
-    local wsid = tonumber(net.ReadString())
-    local value = net.ReadBool()
-
-    local cacheFile = context.dataFolder .. "/workshop_cache.txt"
-    local cache = util.JSONToTable(file.Read(cacheFile, "DATA") or "{}") or {}
-
-    cache[wsid] = cache[wsid] or {}
-    cache[wsid].manual = value
-
-    file.Write(cacheFile, util.TableToJSON(cache))
-end)
-
 for _, downloaderModule in ipairs(modules) do
     if downloaderModule.Run then
         downloaderModule:Run(context)
     end
 end
 
--- Garbage collection will clean everything by itself after execution
+-- Garbage collection will clean the context and other local vars by itself after execution
