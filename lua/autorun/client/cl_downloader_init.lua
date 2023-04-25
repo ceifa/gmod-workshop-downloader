@@ -496,11 +496,11 @@ function Browser:FilterAddons(selectedValue)
     end)
 end
 
-concommand.Add("uwd_page", function()
+concommand.Add("downloader_page", function()
     steamworks.ViewFile(2214712098)
 end)
 
-concommand.Add("uwd_menu", function()
+concommand.Add("downloader_menu", function()
     if Browser.scanResult then
         Browser:Open()
     else
@@ -511,7 +511,7 @@ end)
 
 local function CPanel(self)
     self:Help("UWD - Install and forget.")
-    self:Button("Open Menu", "uwd_menu")
+    self:Button("Open Menu", "downloader_menu")
     self:ControlHelp("- Fully automatic")
     self:ControlHelp("- Extremely fast")
     self:ControlHelp("- Intelligent addon selection")
@@ -521,7 +521,7 @@ local function CPanel(self)
     self:ControlHelp("- Validates pointshop models")
     self:ControlHelp("- Actually works")
     self:Help("If you find any addons that were not detected, please report them to us!")
-    self:Button("Report Error", "uwd_page")
+    self:Button("Report Error", "downloader_page")
 end
 
 hook.Add("PopulateToolMenu", "All hail the menus", function ()
