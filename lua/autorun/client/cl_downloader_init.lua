@@ -84,10 +84,6 @@ function Browser:Open(scanResult)
     end
 end
 
-net.Receive("uwd_exchange_scan_result", function(len, ply)
-    Browser:Open(util.JSONToTable(net.ReadString()))
-end)
-
 function Browser:SetupBasePanels()
     if self.initialized then return end
 
@@ -492,6 +488,40 @@ function Browser:FilterAddons(selectedValue)
     timer.Simple(0.2, function()
         if IsValid(self.frame) and IsValid(self.addonsScroll) then
             self.addonsScroll:InvalidateLayout()
+        end
+    end)
+end
+
+do
+    local receivedTab = {}
+    net.Receive("uwd_exchange_scan_result", function(len, ply)
+        local chunksID = net.ReadString()
+        local chunksSubID = net.ReadUInt(32)
+        local len = net.ReadUInt(16)
+        local chunk = net.ReadData(len)
+        local isLastChunk = net.ReadBool()
+
+        -- Initialize streams or reset overwriten ones
+        if not receivedTab[chunksID] or receivedTab[chunksID].chunksSubID ~= chunksSubID then
+            receivedTab[chunksID] = {
+                chunksSubID = chunksSubID,
+                data = ""
+            }
+
+            -- 3 minutes to remove possible memory leaks
+            timer.Create(chunksID, 180, 1, function()
+                receivedTab[chunksID] = nil
+            end)
+        end
+
+        -- Rebuild the compressed string
+        receivedTab[chunksID].data = receivedTab[chunksID].data .. chunk
+
+        -- Finish stream
+        if isLastChunk then
+            local data = receivedTab[chunksID].data
+
+            Browser:Open(util.JSONToTable(util.Decompress(data)))
         end
     end)
 end
