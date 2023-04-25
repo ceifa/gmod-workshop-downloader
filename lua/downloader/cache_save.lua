@@ -29,7 +29,6 @@ function MODULE:Run(context)
             hasResource = context.addonsToCache[addon.wsid] == true,
             updated = addon.updated,
             isGamemode = context.gamemodeAddons[addon.wsid] == true,
-            scanResult = context.scanResult[addon.wsid],
             manual = context.manualAddons[addon.wsid]
         }
     end

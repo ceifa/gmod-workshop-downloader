@@ -14,21 +14,14 @@ function MODULE:Run(context)
             if scanned.hasResource then
                 table.insert(context.usingAddons, addon)
                 context.addonsToCache[addon.wsid] = true
+                context.scanResult[addon.wsid] = { selected = true, type = "Resources" }
+            else
+                context.scanResult[addon.wsid] = { selected = false, type = "Lua" }
             end
 
             context.ignoreResources[addon.wsid] = true
             context.gamemodeAddons[addon.wsid] = scanned.isGamemode
             context.manualAddons[addon.wsid] = scanned.manual
-
-            if scanned.scanResult then -- Compatibility with older caches
-                context.scanResult[addon.wsid] = scanned.scanResult
-            else
-                if scanned.hasResource then
-                    context.scanResult[addon.wsid] = { selected = true, type = "Resources" }
-                else
-                    context.scanResult[addon.wsid] = { selected = false, type = "Lua" }
-                end
-            end
         end
     end
 
