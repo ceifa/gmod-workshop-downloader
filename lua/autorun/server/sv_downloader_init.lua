@@ -2,9 +2,6 @@ if game.SinglePlayer() then
     return
 end
 
-util.AddNetworkString("uwd_exchange_scan_result")
-util.AddNetworkString("uwd_set_manual_selection")
-
 local files = file.Find("downloader/*.lua", "LUA")
 local modules = {}
 

@@ -1,4 +1,5 @@
-if game.SinglePlayer() then
+local isBrowserEnabled = GetConVar("downloader_gui_enabled"):GetBool()
+if not isBrowserEnabled then
     return
 end
 
@@ -530,7 +531,7 @@ concommand.Add("downloader_page", function()
     steamworks.ViewFile(2214712098)
 end)
 
-concommand.Add("downloader_menu", function()
+concommand.Add("downloader_menu", function()  
     if Browser.scanResult then
         Browser:Open()
     else
