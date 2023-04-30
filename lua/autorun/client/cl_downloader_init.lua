@@ -1,5 +1,5 @@
 local isBrowserEnabled = GetConVar("downloader_gui_enabled"):GetBool()
-if not isBrowserEnabled then
+if game.SinglePlayer() or not isBrowserEnabled then
     return
 end
 
