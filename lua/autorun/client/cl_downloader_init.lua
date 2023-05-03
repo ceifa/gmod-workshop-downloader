@@ -539,12 +539,16 @@ concommand.Add("downloader_menu", function()
     end
 end)
 
+
+
+
 local function CPanel(self)
     self:Help("UWD - Install and forget.")
     self:Button("Open Menu", "downloader_menu")
-    self:ControlHelp("- Fully automatic")
-    self:ControlHelp("- Extremely fast")
+    self:ControlHelp("- Automatic")
     self:ControlHelp("- Intelligent addon selection")
+    self:ControlHelp("- Extremely fast")
+    self:ControlHelp("- Secure")
     self:ControlHelp("- For listen and dedicated servers")
     self:ControlHelp("- Supports legacy addons")
     self:ControlHelp("- Has an easy yet powerful panel")
