@@ -1,4 +1,4 @@
-if game.SinglePlayer() then
+if game.SinglePlayer() or not GetConVar("downloader_gui_enabled"):GetBool() then
     return
 end
 
