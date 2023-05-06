@@ -1,10 +1,7 @@
 local MODULE = {}
 MODULE.Order = 9
 
-local shouldEnableGui = CreateConVar("downloader_gui_enabled", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED,
-    "Should enable GUI for users (require restart)")
-
-if shouldEnableGui:GetBool() then
+if GetConVar("downloader_gui_enabled"):GetBool() then
     util.AddNetworkString("uwd_exchange_scan_result")
     util.AddNetworkString("uwd_set_manual_selection")
 
