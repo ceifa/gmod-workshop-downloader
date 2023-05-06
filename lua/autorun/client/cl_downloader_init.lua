@@ -228,8 +228,8 @@ end
 function Browser:PopulateList()
     local addons = engine.GetAddons() -- I get the addon names locally instead of sending them through net
     local baseDelayNotFound = 0.05
-    local baseDelayFound = 0.015
-    local delay = 0.3
+    local baseDelayFound = 0.025
+    local delay = 0.45
 
     table.sort(addons, function(a, b) return string.lower(a.title) < string.lower(b.title) end)
 
